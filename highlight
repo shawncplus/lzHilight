@@ -1,0 +1,428 @@
+#!/usr/bin/env php
+<?php
+ini_set('error_reporting', 0);
+/**
+ * Simple* syntax highlighter for use on the command line. Uses ECMA-48
+ * SGR sequences for color (man console_codes on a linux box.)
+ * @reference http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-048.pdf
+ * @see Section 8.3.117
+ *
+ * @author Shawn Biddle (shawn@shawnbiddle.com)
+ * @version 0.9
+ */
+
+// Resources directory
+define('RESC_DIR', '<INSTALL_RESC_DIR>');
+define('SYNDIR', 'syntax/');
+define('LIBDIR', 'tokenizers/');
+define('DEFAULT_COLOR', 37);
+
+if(!file_exists(RESC_DIR)) {
+  die('[1;31mERROR:[0m RESC_DIR is not set or is invalid. Read the README for directions on setting it.'."\n");
+}
+
+
+$options  = getopt('i:s:lhvt:o:');
+
+if (empty($options) && count($argv) == 2) {
+  $options['i'] = $argv[1];
+}
+
+$filename = isset($options['i']) ? $options['i'] : NULL;
+$syntax   = isset($options['s']) ? $options['s'] : NULL;
+$lines    = isset($options['l']);
+$tabstop  = isset($options['t']) ? intval($options['t']) : 2;
+$html_out = isset($options['o']) ? $options['o'] : FALSE;
+
+$options = array(
+  'lines' => $lines,
+  'mode'  => $html_out ? 'html' : 'cli'
+);
+
+if (isset($options['v']) && count($options['v']) >= 5) {
+  die("Sorry, this script doesn't moo.\n");
+}
+
+if(isset($options['h'])) {
+  $thisfile = basename(__FILE__);
+  echo <<<HELP
+{$thisfile} -i <filename> [opts]
+  -s <syntax>    Force a syntax (php, xml, css, html)
+  -l             Show line numbers
+  -h             It's what you're looking at!
+  -t <#>         Set tab width
+  -o <outfile>   HTML output (experimental)
+
+HELP;
+die;
+}
+
+if(!file_exists($filename) && $filename !== NULL) {
+  die($filename.": No such file or directory\n");
+} else if(is_dir($filename)) {
+  die($filename.": Is a directory\n");
+}
+
+if ($filename !== NULL) {
+  $output = file($filename);
+  $linecount = count($output);
+  $options['lines'] = $options['lines'] ? $linecount : $options['lines'];
+} else {
+  $output = array();
+  while ($line = fgets(STDIN)) $output[] = $line;
+}
+
+$line1  = $output[0];
+
+$output = implode('', $output);
+
+if ($syntax === NULL) {
+  if (strpos($line1, '#!/usr/bin/env') === 0) {
+    $syntax = @end(explode(' ', $line1));
+  } elseif (preg_match('~^#\!(/[a-z_0-9]+)+$~', $line1)) {
+    $syntax = @end(explode('/', $line1));
+  }
+}
+
+$syntax = $syntax === NULL ? @end(explode('.', $filename)) : $syntax;
+
+// No syntax file, just output without highlighting
+if (!file_exists(RESC_DIR . SYNDIR . $syntax . '.syn')) {
+  $syntax = 'default';
+}
+
+$synfile = RESC_DIR . SYNDIR . $syntax . '.syn';
+$color_map = parse_synfile($synfile, $html_out);
+
+// require the tokenizer library for the syntax
+if (!file_exists(RESC_DIR . LIBDIR . $syntax . '.tok')) {
+  die("Couldn't find the tokenizer library for the syntax '$syntax'\n");
+}
+include(RESC_DIR . LIBDIR . $syntax . '.tok');
+$token_func = 'tokenize_' . $syntax;
+
+if(!function_exists($token_func)) {
+  die('You forgot to write the tokenizer function for syntax [' . $syntax . "]\n");
+}
+
+// hooray, lets tokenize and highlight our stuff
+$tokenized = $token_func($output);
+if($html_out) {
+  $identifiers = get_selector_tokensets($color_map);
+  $output = highlight($tokenized, $color_map, $identifiers, $options, true);
+} else {
+  $output = highlight($tokenized, $color_map, array());
+}
+
+if($lines || $tabstop !== 2) {
+  $output = explode("\n", trim($output));
+  $linewidth = strlen((string)(count($output) + 1));
+  foreach($output as $lineno => $line_content){
+    // No support for line numbers in html output yet
+    if($lines && !$html_out) {
+      $output[$lineno] = '[37m' . str_pad($lineno + 1, $linewidth, " ", STR_PAD_LEFT) . '[0m| ' . $line_content;
+    }
+    if($tabstop !== 2) {
+      $output[$lineno] = str_replace("\t", str_repeat(' ', $tabstop), $output[$lineno]);
+    }
+  }
+  $output = implode("\n", $output);
+}
+
+if ($options['mode'] == 'html') {
+  $fp = fopen($html_out, 'w+');
+  fwrite($fp, $output);
+  fclose($fp);
+  exit;
+}
+
+
+
+/**
+ * Parse a syntax file into a color map to be used by the highlight function.
+ * This is recursive to allow #LINK directives in syntax files.
+ * @param string  Filename of the syntax file to be parsed
+ * @param boolean Use HTML colors?
+ * @return array  Completed color map
+ */
+function parse_synfile($synfile, $html_col = false)
+{
+  $sgr_colors = array(
+    'black'  => '30', 'bblack'  => '1;30', // not sure how bold black works but oh well
+    'red'    => '31', 'bred'    => '1;31',
+    'green'  => '32', 'bgreen'  => '1;32',
+    'yellow' => '33', 'byellow' => '1;33',
+    'blue'   => '34', 'bblue'   => '1;34',
+    'purple' => '35', 'bpurple' => '1;35',
+    'cyan'   => '36', 'bcyan'   => '1;36',
+    'white'  => '37', 'bwhite'  => '1;37'
+  );
+
+  $linked_files = array();
+
+  $synfile = file($synfile);
+  $color_map = array();
+  foreach($synfile as $line_no => $line) {
+    if (trim($line) == '' || strpos($line, '//') === 0 ) continue;
+    $parts = preg_split('/\s+/', trim($line));
+
+    $token = $parts[0];
+    $color = $parts[1];
+    $bg_color = isset($parts[2]) ? $parts[2] : NULL;
+
+    // #LINK directive
+    if ($token == '#LINK') {
+      $linked_synfile = $color;
+      if(!in_array($linked_synfile, $linked_files)) {
+        $linked_files[] = $linked_synfile;
+        $color_map = array_merge($color_map, parse_synfile(RESC_DIR . SYNDIR . $linked_synfile, $html_col));
+      }
+      continue;
+    } // HTML color
+    else if(preg_match('/^#?[0-9A-F]{3,6}/i', $color)) {
+      $color = $html_col ? $color : html_to_sgr($color);
+      if ($bg_color !== NULL && preg_match('/^#?[0-9A-F]{3,6}/i', $bg_color) && $html_col) {
+        $color_map[$token] = array('fg' => $color, 'bg' => $bg_color);
+        continue;
+      }
+    } // Token link
+    else if(preg_match('/[a-z_]/i', $color) && isset($color_map[$color])) {
+      $color_map[$token] = $color_map[$color];
+      continue;
+    } // SGR Sequence
+    else if (array_key_exists($color, $sgr_colors)) {
+      $color = $sgr_colors[$color];
+    }
+    // handler function
+    else if(strpos($color, '|')) {
+      $toggle = $bg_color;
+      list($custom_func, $backup) = explode('|', $color);
+      if($toggle == 'HTMLONLY' && $html_col) {
+        $color = $custom_func;
+      } else if($toggle == 'CONSONLY' && !$html_col) {
+        $color = $custom_func;
+      } else {
+        $color = (preg_match('/[a-z_]/i', $backup)) ? $color_map[$backup] : $backup;
+      }
+    }
+    $color_map[$token] = $color;
+  }
+
+  return $color_map;
+}
+
+/**
+ * Hooray, actually get down to business and highlight the tokens.
+ * This function is also recursive, it takes into account customized
+ * handler methods for tokens.
+ * @param array   Set of tokens generated by the tokenize functions
+ * @param array   Set of colors generated by the parse_synfile function
+ * @return string The finished masterpiece
+ */
+function highlight($tokensets, $colormap, $identifiers, $options = array('mode' => 'cli'), $write_style = false, $begin = true)
+{
+  $output = '';
+  if ($write_style) {
+    $output = '<style type="text/css">
+      pre.code{
+        background-color:' . $colormap['H_BG'] . ';
+        border:2px solid #555;
+        overflow-x:scroll;
+        border-left:none;
+        position:relative;
+        padding-left:2px;
+        margin: 0;
+        float:left
+      }
+      pre.code b{font-weight:normal;}'
+      . generate_css($identifiers['colormap']) . "
+      pre.LN_NUM_WRAP{
+        position:relative;
+        float:left;
+        border: 2px solid #555;
+        border-right:1px solid #fff;
+        background-color:" . $colormap['H_NBG'] . ";
+        color:" . $colormap['H_NFG'] . ";
+      }
+      </style>\n";
+  }
+  if ($options['mode'] == 'html' && $begin) {
+    // add line numbering
+    if ($options['lines']) {
+      $lines = '';
+      $linecount = $options['lines'];
+      $linewidth = strlen('' . $linecount) + 1;
+      for ($i = 1; $i <= $linecount; $i++) {
+        $lines .= '<span id="' . $i . '">' . str_repeat(' ', $linewidth - strlen('' . $i)) . $i . "</span>\n";
+      }
+      $output .= '<pre class="LN_NUM_WRAP">' . $lines . '</pre>';
+    }
+    $output .= '<pre class="code">';
+  }
+
+  $custom_func_prev_token = array();
+  foreach($tokensets as $tokenset) {
+    $color = isset($colormap[$tokenset['token']]) ? $colormap[$tokenset['token']] : DEFAULT_COLOR;
+    $color = is_array($color) ? $color['fg'] : $color;
+
+    // our token requires a special handler function
+    if(preg_match('/[a-z_]/i', $color)) {
+      if(!function_exists($color)) {
+        $color = DEFAULT_COLOR;
+      } else {
+        $out = highlight($color($tokenset['string'], $custom_func_prev_token[$color]), $colormap, $identifiers, $options, false, false);
+        if ($options['mode'] == 'html') $output .= $out;
+        else echo $out;
+        continue;
+      }
+    }
+    if ($options['mode'] == 'html') {
+      if (!isset($tokenset['noentities'])) {
+        $tokenset['string'] = htmlentities($tokenset['string']);
+      }
+      $output .= '<b class="' . $identifiers['tokenmap'][$tokenset['token']] . '">'. $tokenset['string'] . '</b>';
+    } else {
+      echo '[' . $color . 'm' . $tokenset['string'] . '[0m';
+    }
+  }
+  if ($options['mode'] == 'html' && $begin) {
+    $output .= '</pre>';
+  }
+
+  return $output;
+}
+
+
+/**
+ * Generate CSS based on the basemost identifiers
+ * @see get_selector_tokensets
+ * @param array List of base identifiers(selectors)
+ * @return string The css to be printed to the file
+ */
+function generate_css($identifiers)
+{
+  $css = '';
+
+  foreach ($identifiers as $color => $token) {
+    $weight = '';
+    if(!preg_match('/^#?[0-9A-F]{3,6}$/i', $color) && !strpos($color, '|')) {
+      $color = '#fff'; // default to white
+    } else if(strpos($color, '|')) {
+      list($fg, $bg) = explode('|', $color);
+      $css .= '.' . $token . '{color: ' . $fg . ';background-color: ' . $bg . ";}";
+      continue;
+    }
+
+    $css .= '.' . $token . '{color:' . $color . ';' . $weight . "}";
+  }
+  return $css;
+}
+
+/**
+ * Turn an HTML color into one of the 8 colors in the SGR sequences. Modify
+ * the different and bold thresholds to your liking for colors, ie.,
+ * #ff8800 = red, ffaa00 = yellow with a threshold of 0x50. The bold threshold
+ * controls how bright an HTML color has to be before it is bolded. #AA0000 is
+ * bold whereas #550000 is not, both are red however.
+ * @param string HTML color to convert
+ * @return string SGR sequence
+ */
+function html_to_sgr($color)
+{
+  $color = trim(str_replace('#', '', $color));
+  if (!preg_match('/^[0-9A-F]{3,6}$/i', $color)) {
+    return DEFAULT_COLOR;
+  }
+
+  if(strlen($color) == 3) {
+    $color = $color[0] . $color[0] . $color[1] . $color[1] . $color[2] . $color[2];
+  }
+
+  $colparts  = array_map('hexdec', array('red' => substr($color, 0, 2), 'green' => substr($color, 2, 2), 'blue' => substr($color, 4, 2)));
+  $end_color = '';
+
+  $difference_threshold = 0x70;
+  $bold = 0xA0;
+
+  switch (true) {
+    // yellow
+    case ($colparts['red'] > $colparts['blue'] && $colparts['green'] > $colparts['blue'] &&
+      abs($colparts['red'] - $colparts['green']) < $difference_threshold):
+      $end_color = '33';
+      if ($colparts['red'] > $bold || $colparts['green'] > $bold) {
+        $end_color = '1;' . $end_color;
+      }
+    break;
+    // cyan
+    case ($colparts['green'] > $colparts['red'] && $colparts['blue'] > $colparts['red'] &&
+      abs($colparts['green'] - $colparts['blue']) < $difference_threshold):
+      $end_color = '36';
+      if ($colparts['green'] > $bold || $colparts['blue'] > $bold) {
+        $end_color = '1;' . $end_color;
+      }
+    break;
+    // magenta
+    case ($colparts['red'] > $colparts['green'] && $colparts['blue'] > $colparts['green'] &&
+      abs($colparts['red'] - $colparts['blue']) < $difference_threshold):
+      $end_color = '35';
+      if ($colparts['red'] > $bold || $colparts['blue'] > $bold) {
+        $end_color = '1;' . $end_color;
+      }
+    break;
+    // red
+  case ($colparts['red'] > $colparts['green'] && $colparts['red'] > $colparts['blue']):
+    $end_color = '31';
+    if ($colparts['red'] > $bold) {
+      $end_color = '1;' . $end_color;
+    }
+    break;
+    // green
+  case ($colparts['green'] > $colparts['red'] && $colparts['green'] > $colparts['blue']):
+    $end_color = '32';
+    if ($colparts['green'] > $bold) {
+      $end_color = '1;' . $end_color;
+    }
+    break;
+    // blue
+  case ($colparts['blue'] > $colparts['green'] && $colparts['blue'] > $colparts['red']):
+    $end_color = '34';
+    if ($colparts['blue'] > $bold) {
+      $end_color = '1;' . $end_color;
+    }
+    break;
+  default:
+    $end_color = '37';
+    break;
+  }
+
+  return $end_color;
+}
+
+
+/**
+ * Creates two arrays. One being the array that generate_css will use to write
+ * out the CSS (containing only the base identifiers). The second being an
+ * array containing all of the tokens as keys and the basemost identifier as
+ * their values.
+ * @param array The color map returned by parse_synfile
+ * @return array
+ */
+function get_selector_tokensets($colormap)
+{
+  $identifiers = array();
+  $tokenmap = array();
+  foreach($colormap as $token => $color) {
+    $selector = $token;
+    $color = is_array($color) ? $color['fg'] . '|' . $color['bg'] : $color;
+    if(isset($identifiers[$color]) && !isset($tokenmap[$token])) {
+      $tokenmap[$token] = $identifiers[$color];
+      continue;
+    }
+
+    $identifiers[$color] = $selector;
+    if(!isset($tokenmap[$token])) {
+      $tokenmap[$token] = $identifiers[$color];
+    }
+  }
+  return array('colormap' => $identifiers, 'tokenmap' => $tokenmap);
+}

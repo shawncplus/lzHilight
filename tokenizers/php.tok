@@ -1,0 +1,86 @@
+<?php
+
+/**
+ * Even if we don't use its functions we have to include the file so we have
+ * access to them
+ */
+include('html.tok');
+
+/*
+Bugs:
+http://bugs.php.net/48446 - T_INLINE_HTML is split into 2 parts if the HTML
+tag starts with an s. This breaks some syntax highlighting, est no bueno.
+ */
+
+$func_next      = false;
+$function_table = array();
+
+function tokenize_php($output)
+{
+	$ret_tokens = array();
+	foreach (token_get_all($output) as $key => $token) {
+		if(is_array($token)) {
+			$ret_tokens[] = array('token' => token_name($token[0]), 'string' => $token[1]);
+		} else {
+			$ret_tokens[] = array('token' => 'T_NORMAL', 'string' => $token);
+		}
+	}
+	return $ret_tokens;
+}
+
+function handlevar($string)
+{
+	return !preg_match('#(\$)([a-z0-9_]+)#i', $string, $var) ? array() : array(
+		array('token' => 'T_VAR_TOKEN', 'string' => $var[1]),
+		array('token' => 'T_VAR_NAME',  'string' => $var[2])
+	);
+}
+
+function handlefunc($string)
+{
+	// sorry, until I make tokenizers classes this has to be here :(
+	global $func_next;
+	$func_next = true;
+	return array(array('token' => 'PHP_FUNCTION', 'string' => $string));
+}
+
+function handlestring($string)
+{
+	// sorry, until I make tokenizers classes this has to be here :(
+	global $func_next, $function_table;
+
+	if ($func_next) {
+		$function_table[]= trim($string);
+		$string = '<a id="' . trim($string) . '">' . $string . '</a>';
+		$func_next = false;
+		return array(array('token' => 'H_FG', 'string' => $string, 'noentities' => 1));
+	} if (in_array(trim($string), $function_table)) {
+		$string = '<a href="#' . trim($string) .'">' . $string . '</a>';
+		return array(array('token' => 'H_FG', 'string' => $string, 'noentities' => 1));
+	} else {
+		return array(array('token' => 'PHP_NORMAL', 'string' => $string));
+	}
+}
+
+function handle_docblock($string)
+{
+	if(strpos($string, '@') === false) {
+		return array(array('token' => 'PHP_DOCBLOCK', 'string' => $string));
+	}
+
+	$doctoks = array();
+	foreach(explode("\n", $string) as $docpart) {
+		$doctag = array();
+		if(preg_match('#(^\s*\*\s+)(@[a-z]+)(:?\s*.+)$#i', $docpart, $doctag)) {
+			$doctoks[] = array('token' => 'PHP_DOCBLOCK', 'string' => $doctag[1]);
+			$doctoks[] = array('token' => 'PHP_DOCTAG',    'string' => $doctag[2]);
+			$doctoks[] = array('token' => 'PHP_DOCBLOCK', 'string' => $doctag[3]."\n");
+		} else {
+			$doctoks[] = array('token' => 'PHP_DOCBLOCK', 'string' => $docpart . (strpos($docpart, '*/') === false ? "\n" : ''));
+		}
+	}
+
+	return $doctoks;
+}
+
+/* vim: set syn=php: */

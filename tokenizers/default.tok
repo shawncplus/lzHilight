@@ -1,0 +1,7 @@
+<?php
+function tokenize_default($string)
+{
+  return array(array('token' => 'NORMAL', 'string' => $string));
+}
+
+/* vim: set syn=php: */

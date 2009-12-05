@@ -1,0 +1,9 @@
+<?php
+include('html.tok');
+
+function tokenize_xml($output, &$starting_state = HTML_CONTENT)
+{
+  return tokenize_html($output, $starting_state);
+}
+
+/* vim: set syn=php: */

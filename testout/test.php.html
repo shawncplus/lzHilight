@@ -1,0 +1,30 @@
+<style type="text/css">a{color:inherit}pre.code{background-color:#0C0C0C;padding:5px;border:2px solid #555;overflow-x:scroll;}pre.code b{font-weight:normal;}.H_BG{color:#0C0C0C;}.H_FG{color:#F8F8F8;}.OP{color:#8AC6F2;}.DELIM{color:#8F8F8F;}.PPROC{color:#A6E22E;}.TYP{color:#66D9EF;}.CONST{color:#AE81FF;}.STR{color:#75d142;}.COMM{color:#5D8D8F;}.ERR{color: #960050;background-color: #1E0010;}.IDENT{color:#d44d3e;}.PHP_DOCTAG{color:#94e1e4;}.T_DOC_COMMENT{color:#fff;}.T_FUNCTION{color:#fff;}.T_INLINE_HTML{color:#fff;}.T_STRING{color:#fff;}.T_VARIABLE{color:#fff;}.CSS_PROP{color:#fff;}.CSS_OPEN_BRC{color:#fff;}.CSS_VALP{color:#FD971F;}.CSS_INVP{color:#fff;}.HTML_STRING_S{color:#fff;}</style>
+<pre class="code"><b class="DELIM">&lt;?php
+</b><b class="H_FG">
+  </b><b class="IDENT">function</b><b class="H_FG"> </b><b class="H_FG"><a id="spacer">spacer</a></b><b class="H_FG">(</b><b class="OP">$</b><b class="IDENT">fact</b><b class="H_FG">,</b><b class="H_FG"> </b><b class="OP">$</b><b class="IDENT">words</b><b class="H_FG"> </b><b class="H_FG">=</b><b class="H_FG"> </b><b class="TYP">array</b><b class="H_FG">(</b><b class="H_FG">)</b><b class="H_FG">)</b><b class="H_FG">
+  </b><b class="H_FG">{</b><b class="H_FG">
+    </b><b class="COMM">// Let's display the name and the fact correctly
+</b><b class="H_FG">    </b><b class="IDENT">if</b><b class="H_FG">(</b><b class="OP">empty</b><b class="H_FG">(</b><b class="OP">$</b><b class="IDENT">words</b><b class="H_FG">)</b><b class="H_FG">)</b><b class="H_FG"> </b><b class="H_FG">{</b><b class="H_FG">
+      </b><b class="OP">$</b><b class="IDENT">words</b><b class="H_FG"> </b><b class="H_FG">=</b><b class="H_FG"> </b><b class="TYP">array</b><b class="H_FG">(</b><b class="STR">&quot;'&quot;</b><b class="H_FG">)</b><b class="H_FG">;</b><b class="H_FG"> </b><b class="COMM">// More to come as example present themselves.
+</b><b class="H_FG">    </b><b class="H_FG">}</b><b class="H_FG">
+    </b><b class="OP">$</b><b class="IDENT">clean_words</b><b class="H_FG"> </b><b class="H_FG">=</b><b class="H_FG"> </b><b class="H_FG">array_map</b><b class="H_FG">(</b><b class="STR">'preg_quote'</b><b class="H_FG">,</b><b class="H_FG"> </b><b class="OP">$</b><b class="IDENT">words</b><b class="H_FG">)</b><b class="H_FG">;</b><b class="H_FG">
+    </b><b class="IDENT">return</b><b class="H_FG"> </b><b class="H_FG">preg_match</b><b class="H_FG">(</b><b class="STR">'/^\s*('</b><b class="H_FG">.</b><b class="H_FG">join</b><b class="H_FG">(</b><b class="STR">'|'</b><b class="H_FG">,</b><b class="H_FG"> </b><b class="OP">$</b><b class="IDENT">clean_words</b><b class="H_FG">)</b><b class="H_FG">.</b><b class="STR">')/'</b><b class="H_FG">,</b><b class="H_FG"> </b><b class="OP">$</b><b class="IDENT">fact</b><b class="H_FG">)</b><b class="H_FG"> </b><b class="H_FG">?</b><b class="H_FG"> </b><b class="OP">$</b><b class="IDENT">fact</b><b class="H_FG"> </b><b class="H_FG">:</b><b class="H_FG"> </b><b class="STR">' '</b><b class="H_FG">.</b><b class="OP">$</b><b class="IDENT">fact</b><b class="H_FG">;</b><b class="H_FG">
+  </b><b class="H_FG">}</b><b class="H_FG">
+
+
+</b><b class="OP">$</b><b class="IDENT">fact1</b><b class="H_FG"> </b><b class="H_FG">=</b><b class="H_FG"> </b><b class="STR">'has awesome pants'</b><b class="H_FG">;</b><b class="H_FG">
+</b><b class="OP">$</b><b class="IDENT">fact2</b><b class="H_FG"> </b><b class="H_FG">=</b><b class="H_FG"> </b><b class="STR">'\'s pants are awesome'</b><b class="H_FG">;</b><b class="H_FG">
+
+</b><b class="OP">$</b><b class="IDENT">user</b><b class="H_FG"> </b><b class="H_FG">=</b><b class="H_FG"> </b><b class="STR">'Shawn'</b><b class="H_FG">;</b><b class="H_FG">
+
+</b><b class="IDENT">echo</b><b class="H_FG"> </b><b class="OP">$</b><b class="IDENT">user</b><b class="H_FG">.</b><b class="H_FG"><a href="#spacer">spacer</a></b><b class="H_FG">(</b><b class="OP">$</b><b class="IDENT">fact1</b><b class="H_FG">)</b><b class="H_FG">;</b><b class="H_FG">
+</b><b class="IDENT">echo</b><b class="H_FG"> </b><b class="STR">&quot;\n&quot;</b><b class="H_FG">.</b><b class="OP">$</b><b class="IDENT">user</b><b class="H_FG">.</b><b class="H_FG"><a href="#spacer">spacer</a></b><b class="H_FG">(</b><b class="OP">$</b><b class="IDENT">fact2</b><b class="H_FG">)</b><b class="H_FG">;</b><b class="H_FG">
+</b><b class="DELIM">?&gt;
+</b><b class="H_FG">This is some example text
+</b><b class="H_FG">&lt;</b><b class="TYP">html</b><b class="H_FG">&gt;</b><b class="H_FG">
+</b><b class="H_FG">&lt;</b><b class="TYP">head</b><b class="H_FG">&gt;</b><b class="H_FG">
+  </b><b class="H_FG">&lt;</b><b class="TYP">title</b><b class="H_FG">&gt;</b><b class="H_FG">TEST!!!</b><b class="H_FG">&lt;</b><b class="H_FG">/</b><b class="TYP">title</b><b class="H_FG">&gt;</b><b class="H_FG">
+</b><b class="H_FG">&lt;</b><b class="H_FG">/</b><b class="TYP">head</b><b class="H_FG">&gt;</b><b class="H_FG">
+</b><b class="H_FG">&lt;</b><b class="TYP">body</b><b class="H_FG">&gt;</b><b class="H_FG">WTF?</b><b class="H_FG">&lt;</b><b class="H_FG">/</b><b class="TYP">body</b><b class="H_FG">&gt;</b><b class="H_FG">
+</b><b class="H_FG">&lt;</b><b class="H_FG">/</b><b class="TYP">html</b><b class="H_FG">&gt;</b><b class="H_FG">
+</b></pre>

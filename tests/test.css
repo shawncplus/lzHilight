@@ -1,0 +1,13 @@
+identifier {
+  property: 36px;
+}
+
+tagname > child.classname {
+  someprop: 10px;
+  src: url('blah blah');
+}
+/* this is a comment! */
+body + sibling { test-prop: blah; }
+
+testtag >> error, testtag blah { blah: blah2; }
+
