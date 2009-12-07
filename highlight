@@ -269,7 +269,10 @@ function highlight($tokensets, $colormap, $identifiers, $options = array('mode' 
       if(!function_exists($color)) {
         $color = DEFAULT_COLOR;
       } else {
-        $inner_tokens = $color($tokenset['string'], isset($custom_func_prev_token[$color]) ? $custom_func_prev_token[$color] : NULL);
+        $inner_tokens = array_key_exists($color, $custom_func_prev_token) ?
+            $color($tokenset['string'], $custom_func_prev_token[$color])
+             :
+            $color($tokenset['string']);
         $out = highlight($inner_tokens, $colormap, $identifiers, $options, false, false);
         if ($options['mode'] == 'html') $output .= $out;
         else echo $out;
