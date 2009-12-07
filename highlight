@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-ini_set('error_reporting', 0);
 /**
  * Simple* syntax highlighter for use on the command line. Uses ECMA-48
  * SGR sequences for color (man console_codes on a linux box.)
@@ -270,7 +269,8 @@ function highlight($tokensets, $colormap, $identifiers, $options = array('mode' 
       if(!function_exists($color)) {
         $color = DEFAULT_COLOR;
       } else {
-        $out = highlight($color($tokenset['string'], $custom_func_prev_token[$color]), $colormap, $identifiers, $options, false, false);
+        $inner_tokens = $color($tokenset['string'], isset($custom_func_prev_token[$color]) ? $custom_func_prev_token[$color] : NULL);
+        $out = highlight($inner_tokens, $colormap, $identifiers, $options, false, false);
         if ($options['mode'] == 'html') $output .= $out;
         else echo $out;
         continue;
