@@ -1,0 +1,91 @@
+## Getting Started
+###  Requirements
+  -----------------------------------------------------------------------------
+  -  PHP 5.2.x or greater
+  -  Linux only until PHP 5.3
+
+###  Installing
+  -----------------------------------------------------------------------------
+    1. chmod a+x install.sh
+    2. sudo ./install.sh
+
+###  Usage
+  -----------------------------------------------------------------------------
+    man lzhighlight
+
+## Extending
+-------------------------------------------------------------------------------
+
+###  Syntax Files
+-----------------------------------------------------------------------------
+To add a syntax to the highlighter you need to create two files: syntax.syn
+and syntax.tok. syntax.syn will be a newline separated file containing the
+tokens and associated color (see man console_codes) OR HTML colors
+Example:
+	T_STRING 1;32
+	T_ELSEIF #FF00FF
+If the color is an hex color
+
+The tokens in syntax.syn must match the tokens produced by syntax.tok. The
+.syn files can link together by using the #LINK directive ie.,
+	T_STRING 1;32
+	T_ELSEIF 31
+	#LINK html.syn
+
+The color can also be another token which links multiple tokens together:
+	T_STRING        bgreen   // use human readable color
+	T_ENCAPS_STRING T_STRING // link T_ENCAPS_STRING to T_STRING
+
+### Handler Methods
+---------------------------------------------------------------------------
+Inside the tokenizers you can write methods to handle tokens directly if
+there is extra processing that needs to take place (making URLs links, etc)
+To do this, simply put the name of the function as the color:
+	HTML_STRING      html_handle_string
+
+Also, you can specify whether or not it should happen only on HTML or
+console output. When you do this you must specify a fallback color to use.
+	HTML_STRING      html_handle_string|STRING    HTMLONLY
+
+The function must always come first followed by a pipe and a color, which
+like above, can be another token name.
+
+### Tokenizers
+-----------------------------------------------------------------------------
+The <syntax>.tok file at minimum must contain the function tokenize_syntax
+ie., tokenize_php. This function will return an array of tokenizations of
+the code passed to the function as a string. The array should follow the
+format of:
+	array(
+		0 => array(
+			'token' => 'T_STRING',
+			'string' => "'this is some string in the code'"
+		),
+		1 => array(
+			'token' => 'T_ELSEIF',
+			'string' => 'elseif'
+		)
+	)
+See the bundled php.tok and php.syn for more examples.
+
+Each token may have a specialized handler for the color, see T_VARIABLE in
+php.syn and handlevar() in php.tok as an example. Note that this function
+CAN point directly to another syntax's tokenizer ie.,
+	T_INLINE_HTML  tokenize_html // highlight HTML in PHP files
+
+Coinciding with the #LINK directive in the .syn files you must include() or
+require() the appropriate .tok file to produce tokens for the colors.
+
+### Custom Handlers
+----------------------------------------------------------------------------
+The custom handler functions are essentially mini-tokenizers which can
+themselves create tokens or act as wrapper functions to another syntax's
+tokenize function. In either case it should return an array of tokens just
+as the standard tokenize_* functions do. See handlevar in the bundled
+php.tok for an example of generating tokens without another tokenizer.
+
+
+## Further Info
+-------------------------------------------------------------------------------
+If you can't get it working or you found a bug, etc. then send an email to
+shawn AT shawnbiddle DOT com with the subject 'Syntax Highlighter'
