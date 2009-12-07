@@ -1,0 +1,68 @@
+<?php
+/**
+ * Simple FSM for tokenizing INI files, there are probably more accurate,
+ * better written tokenizers out there but I didn't feel like searching
+ * so I wrote this, it's fast enough for me.
+ *
+ * @author Shawn Biddle (shawn@shawnbiddle.com)
+ * @version 0.6
+ */
+
+define('INI_WHITESPACE',   0); define('INI_BRACE',        1); define('INI_SECTION',      2); define('INI_COMMENT', 3);
+define('INI_KEY',          4); define('INI_STRING_S',     5); define('INI_STRING_D',     6); define('INI_VAL_I',   7);
+define('INI_ERROR',        8); define('INI_EQUAL',        9);
+function tokenize_ini($output, &$starting_state = INI_WHITESPACE)
+{
+	$tokens = array(
+		'INI_WHTSPC', 'INI_BRC', 'INI_SEC', 'INI_COMM', 'INI_KEY', 'INI_STR_S', 'INI_STR_D', 'INI_VAL_I', 'INI_ERR', 'INI_EQ',
+	);
+	$i = 0;
+	$state = is_string($starting_state) ? array_search($starting_state, $tokens) : INI_WHITESPACE;
+	$ret_tokens = array();
+	$cur_state_string = '';
+	while(isset($output[$i])) {
+		$char = $output[$i++];
+		$new_state = ini_change_state($state, $char);
+		if($new_state != $state) {
+			$ret_tokens[] = array('token' => $tokens[$state], 'string' => $cur_state_string);
+			$state = $new_state;
+			$cur_state_string = $char;
+			continue;
+		}
+		$cur_state_string .= $char;
+	}
+	$ret_tokens[] = array('token' => $tokens[$state], 'string' => $cur_state_string);
+	$starting_state = $tokens[$state];
+	return $ret_tokens;
+}
+
+function ini_change_state($state, $char)
+{
+	$table = array(
+		INI_WHITESPACE => array(';' => INI_COMMENT, '\w' => INI_KEY, '\[' => INI_BRACE),
+		INI_BRACE      => array('\w' => INI_SECTION, '\s' => INI_WHITESPACE, '.' => INI_ERROR),
+		INI_SECTION    => array('\]' => INI_BRACE),
+		INI_COMMENT    => array('\s' => INI_WHITESPACE),
+		INI_KEY        => array('\=' => INI_EQUAL, '[^\w\.]' => INI_ERROR),
+		INI_EQUAL      => array('\'' => INI_STRING_S, '"' => INI_STRING_D, '[\.\d]' => INI_VAL_I),
+		INI_STRING_S   => array('\'' => INI_WHITESPACE),
+		INI_STRING_D   => array('"'  => INI_WHITESPACE),
+		INI_VAL_I      => array('\s' => INI_WHITESPACE),
+	);
+
+	if(!isset($table[$state])) {
+		return $state;
+	}
+	foreach($table[$state] as $event => $output) {
+		if(is_int($event)) {
+			return ini_change_state($output, $char);
+		}
+		if(preg_match('/'.$event.'/', $char)) {
+			return $output;
+		}
+	}
+	return $state;
+}
+
+
+/* vim: set syn=php: */
