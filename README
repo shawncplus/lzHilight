@@ -20,14 +20,14 @@ Extending
   Syntax Files
   -----------------------------------------------------------------------------
   To add a syntax to the highlighter you need to create two files: syntax.syn
-  and syntax.lib. syntax.syn will be a newline separated file containing the
+  and syntax.tok. syntax.syn will be a newline separated file containing the
   tokens and associated color (see man console_codes) OR HTML colors
     Example:
       T_STRING 1;32
       T_ELSEIF #FF00FF
   If the color is an hex color
 
-   The tokens in syntax.syn must match the tokens produced by syntax.lib. The
+   The tokens in syntax.syn must match the tokens produced by syntax.tok. The
    .syn files can link together by using the #LINK directive ie.,
      T_STRING 1;32
      T_ELSEIF 31
@@ -53,7 +53,7 @@ Extending
 
   Tokenizers
   -----------------------------------------------------------------------------
-   The <syntax>.lib file at minimum must contain the function tokenize_syntax
+   The <syntax>.tok file at minimum must contain the function tokenize_syntax
    ie., tokenize_php. This function will return an array of tokenizations of
    the code passed to the function as a string. The array should follow the
    format of:
@@ -67,10 +67,10 @@ Extending
            'string' => 'elseif'
          )
      )
-   See the bundled php.lib and php.syn for more examples.
+   See the bundled php.tok and php.syn for more examples.
 
    Each token may have a specialized handler for the color, see T_VARIABLE in
-   php.syn and handlevar() in php.lib as an example. Note that this function
+   php.syn and handlevar() in php.tok as an example. Note that this function
    CAN point directly to another syntax's tokenizer ie.,
      T_INLINE_HTML  tokenize_html // highlight HTML in PHP files
 
