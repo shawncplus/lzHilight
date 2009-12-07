@@ -269,10 +269,9 @@ function highlight($tokensets, $colormap, $identifiers, $options = array('mode' 
       if(!function_exists($color)) {
         $color = DEFAULT_COLOR;
       } else {
-        $inner_tokens = array_key_exists($color, $custom_func_prev_token) ?
-            $color($tokenset['string'], $custom_func_prev_token[$color])
-             :
-            $color($tokenset['string']);
+        $prev_token = isset($custom_func_prev_token[$color]) ? $custom_func_prev_token[$color] : NULL;
+        $inner_tokens = $color($tokenset['string'], $prev_token);
+        $custom_func_prev_token[$color] = $prev_token;
         $out = highlight($inner_tokens, $colormap, $identifiers, $options, false, false);
         if ($options['mode'] == 'html') $output .= $out;
         else echo $out;
@@ -429,3 +428,5 @@ function get_selector_tokensets($colormap)
   }
   return array('colormap' => $identifiers, 'tokenmap' => $tokenmap);
 }
+
+/* vim: set et: */
