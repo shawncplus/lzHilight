@@ -41,19 +41,19 @@ The color can also be another token which links multiple tokens together:
 Inside the tokenizers you can write methods to handle tokens directly if
 there is extra processing that needs to take place (making URLs links, etc)
 To do this, simply put the name of the function as the color:
-	HTML_STRING      html_handle_string
+	HTML_STRING      HtmlLexer::handleString
 
 Also, you can specify whether or not it should happen only on HTML or
 console output. When you do this you must specify a fallback color to use.
-	HTML_STRING      html_handle_string|STRING    HTMLONLY
+	HTML_STRING      HtmlLexer::handleString|STRING    HTMLONLY
 
 The function must always come first followed by a pipe and a color, which
 like above, can be another token name.
 
 ### Tokenizers
 -----------------------------------------------------------------------------
-The <syntax>.tok file at minimum must contain the function tokenize_syntax
-ie., tokenize_php. This function will return an array of tokenizations of
+The <syntax>.tok file at minimum must contain the camelized class <syntax>Lexer
+ie., PhpLexer. This class's tokenize method returns an array of tokenizations of
 the code passed to the function as a string. The array should follow the
 format of:
 	array(
@@ -71,7 +71,7 @@ See the bundled php.tok and php.syn for more examples.
 Each token may have a specialized handler for the color, see T_VARIABLE in
 php.syn and handlevar() in php.tok as an example. Note that this function
 CAN point directly to another syntax's tokenizer ie.,
-	T_INLINE_HTML  tokenize_html // highlight HTML in PHP files
+	T_INLINE_HTML  HtmlLexer::tokenize // highlight HTML in PHP files
 
 Coinciding with the #LINK directive in the .syn files you must include() or
 require() the appropriate .tok file to produce tokens for the colors.
