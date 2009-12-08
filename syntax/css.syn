@@ -5,7 +5,7 @@ CSS_IDEN         FUNC
 CSS_CLS          OP
 CSS_ID           OP
 CSS_PCLS         OP
-CSS_PROP         css_handle_property
+CSS_PROP         CssLexer::handleProperty
 CSS_MEASURE      CONST
 CSS_STR_S        STR
 CSS_STR_D        CSS_STR_S

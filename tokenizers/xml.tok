@@ -1,9 +1,7 @@
 <?php
-include('html.tok');
 
-function tokenize_xml($output, &$starting_state = HTML_CONTENT)
+class XmlLexer extends HtmlLexer
 {
-  return tokenize_html($output, $starting_state);
 }
 
-/* vim: set syn=php: */
+/* vim: set syn=php ft=php: */
