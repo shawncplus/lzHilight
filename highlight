@@ -13,7 +13,7 @@
 require_once('autoload.php');
 
 // Resources directory
-define('RESC_DIR', '<INSTALL_RESC_DIR>');
+define('RESC_DIR', dirname(__FILE__) . '/');
 define('SYNDIR', 'syntax/');
 define('LIBDIR', 'tokenizers/');
 define('DEFAULT_COLOR', 37);
@@ -34,11 +34,6 @@ $syntax   = isset($options['s']) ? $options['s'] : NULL;
 $lines    = isset($options['l']);
 $tabstop  = isset($options['t']) ? intval($options['t']) : 2;
 $html_out = isset($options['o']) ? $options['o'] : FALSE;
-
-$options = array(
-	'lines' => $lines,
-	'mode'  => $html_out ? 'html' : 'cli'
-);
 
 if (isset($options['v']) && count($options['v']) >= 5) {
 	die("Sorry, this script doesn't moo.\n");
@@ -66,8 +61,7 @@ if(!file_exists($filename) && $filename !== NULL) {
 
 if ($filename !== NULL) {
 	$output = file($filename);
-	$linecount = count($output);
-	$options['lines'] = $options['lines'] ? $linecount : $options['lines'];
+	$lines = $lines ? count($output) : $lines;
 } else {
 	$output = array();
 	while ($line = fgets(STDIN)) $output[] = $line;

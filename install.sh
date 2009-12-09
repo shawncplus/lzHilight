@@ -32,9 +32,8 @@ case "$answer" in
 ;;
 esac
 
-cp ./highlight $installpath
+ln -s ./highlight $installpath
 echo "Installing and configuring highlight script..."
-sed -i "s#<INSTALL_RESC_DIR>#`pwd`/#" $installpath
 
 echo "Install finished, would you like to view the man page? [Yn]";
 read -s -n 1 answer
