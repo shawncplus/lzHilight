@@ -1,0 +1,24 @@
+H_BG  #050505 //#131313
+H_FG  #f6f3e8
+
+H_NBG #333
+H_NFG #FFF
+
+
+OP          #8AC6F2
+DELIM       #e7f6da
+PPROC       #e5786d
+TYP         #CAE682
+NORM        H_FG
+CONST       PREPROC
+STR         #777 #000
+COMM        #99968B
+ERR         #960050 #1E0010
+IDENT       #CAE682
+KEY         OP
+CNSTRCT     OP
+MOD         TYP
+SCOPE       TYP
+STRUC       TYP
+DOCBLOCK    COMM
+FUNC        PPROC

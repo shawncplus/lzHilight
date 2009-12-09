@@ -14,7 +14,6 @@ require_once('autoload.php');
 
 // Resources directory
 define('RESC_DIR', dirname(__FILE__) . '/');
-define('SYNDIR', 'syntax/');
 define('LIBDIR', 'tokenizers/');
 define('DEFAULT_COLOR', 37);
 
@@ -23,7 +22,7 @@ if(!file_exists(RESC_DIR)) {
 }
 
 
-$options  = getopt('i:s:lhvt:o:');
+$options  = getopt('i:s:lhvt:o:e:');
 
 if (empty($options) && count($argv) == 2) {
 	$options['i'] = $argv[1];
@@ -34,6 +33,7 @@ $syntax   = isset($options['s']) ? $options['s'] : NULL;
 $lines    = isset($options['l']);
 $tabstop  = isset($options['t']) ? intval($options['t']) : 2;
 $html_out = isset($options['o']) ? $options['o'] : FALSE;
+$theme    = isset($options['e']) ? $options['e'] : NULL;
 
 if (isset($options['v']) && count($options['v']) >= 5) {
 	die("Sorry, this script doesn't moo.\n");
@@ -81,8 +81,10 @@ if ($syntax === NULL) {
 
 $syntax = $syntax === NULL ? @end(explode('.', $filename)) : $syntax;
 
+$SYNDIR = $theme === NULL ? 'syntax/' : ('themes/' . $theme .'/');
+
 // No syntax file, just output without highlighting
-if (!file_exists(RESC_DIR . SYNDIR . $syntax . '.syn')) {
+if (!file_exists(RESC_DIR . $SYNDIR . $syntax . '.syn')) {
 	$syntax = 'default';
 }
 
@@ -93,7 +95,7 @@ if(!class_exists($class)) {
 
 // hooray, lets tokenize and highlight our stuff
 $synparser = new SynfileParser();
-$synparser->setSynfileDir(RESC_DIR . SYNDIR);
+$synparser->setSynfileDir(RESC_DIR . $SYNDIR);
 
 $lexer = new $class;
 
