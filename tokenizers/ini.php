@@ -17,11 +17,11 @@ class IniLexer extends DefaultLexer
 
 	protected $state_table = array(
 		INI_WHITESPACE => array(';' => INI_COMMENT, '\w' => INI_KEY, '\[' => INI_BRACE),
-		INI_BRACE      => array('\w' => INI_SECTION, '\s' => INI_WHITESPACE, '.' => INI_ERROR),
+		INI_BRACE      => array("[^\n\r]" => INI_SECTION, "[\n\r]" => INI_WHITESPACE),
 		INI_SECTION    => array('\]' => INI_BRACE),
 		INI_COMMENT    => array("[\n\r]" => INI_WHITESPACE),
 		INI_KEY        => array('\=' => INI_EQUAL, "[ \t]" => INI_I_WHITESPACE, '[^\w\-\.]' => INI_ERROR),
-		INI_EQUAL      => array('\'' => INI_STRING_S, '"' => INI_STRING_D, '[\.\d]' => INI_VAL_I, "[ \t]" => INI_I_WHITESPACE),
+		INI_EQUAL      => array('\'' => INI_STRING_S, '"' => INI_STRING_D, '[\.\d]' => INI_VAL_I, "[ \t]" => INI_I_WHITESPACE, "[^ \t]" => INI_VAL_S),
 		INI_STRING_S   => array("[\n\r]" => INI_WHITESPACE),
 		INI_STRING_D   => array("[\n\r]" => INI_WHITESPACE),
 		INI_VAL_I      => array('\s' => INI_WHITESPACE),
@@ -36,6 +36,3 @@ class IniLexer extends DefaultLexer
 		'INI_EQ', 'INI_I_WHTSPC', 'INI_VAL_S',
 	);
 }
-
-
-/* vim: set syn=php: */
