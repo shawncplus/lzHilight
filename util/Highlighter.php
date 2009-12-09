@@ -164,7 +164,7 @@ class Highlighter
 				$output .= '[' . $color . 'm' . $tokenset['string'] . '[0m';
 			}
 		}
-		if ($options['mode'] == 'html' && $begin) {
+		if ($this->mode == 'html' && $begin) {
 			$output .= '</pre>';
 		}
 

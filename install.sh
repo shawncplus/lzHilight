@@ -32,7 +32,7 @@ case "$answer" in
 ;;
 esac
 
-ln -s ./highlight $installpath
+ln -s `pwd`/highlight $installpath
 echo "Installing and configuring highlight script..."
 
 echo "Install finished, would you like to view the man page? [Yn]";

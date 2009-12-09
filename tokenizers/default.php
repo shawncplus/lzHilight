@@ -24,7 +24,7 @@ class DefaultLexer
 			$cur_state_string .= $char;
 		}
 		$ret_tokens[] = array('token' => $this->tokens[$state], 'string' => $cur_state_string);
-		$starting_state = $tokens[$state];
+		$starting_state = $this->tokens[$state];
 		return $ret_tokens;
 	}
 
