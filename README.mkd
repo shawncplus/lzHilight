@@ -19,14 +19,14 @@
 ###  Syntax Files
 -----------------------------------------------------------------------------
 To add a syntax to the highlighter you need to create two files: syntax.syn
-and syntax.tok. syntax.syn will be a newline separated file containing the
+and syntax.php. syntax.syn will be a newline separated file containing the
 tokens and associated color (see man console_codes) OR HTML colors
 Example:
 	T_STRING 1;32
 	T_ELSEIF #FF00FF
 If the color is an hex color
 
-The tokens in syntax.syn must match the tokens produced by syntax.tok. The
+The tokens in syntax.syn must match the tokens produced by syntax.php. The
 .syn files can link together by using the #LINK directive ie.,
 	T_STRING 1;32
 	T_ELSEIF 31
@@ -52,7 +52,7 @@ like above, can be another token name.
 
 ### Tokenizers
 -----------------------------------------------------------------------------
-The <syntax>.tok file at minimum must contain the camelized class <syntax>Lexer
+The <syntax>.php file at minimum must contain the camelized class <syntax>Lexer
 ie., PhpLexer. This class's tokenize method returns an array of tokenizations of
 the code passed to the function as a string. The array should follow the
 format of:
@@ -66,15 +66,15 @@ format of:
 			'string' => 'elseif'
 		)
 	)
-See the bundled php.tok and php.syn for more examples.
+See the bundled php.php and php.syn for more examples.
 
 Each token may have a specialized handler for the color, see T_VARIABLE in
-php.syn and handlevar() in php.tok as an example. Note that this function
+php.syn and handlevar() in php.php as an example. Note that this function
 CAN point directly to another syntax's tokenizer ie.,
 	T_INLINE_HTML  HtmlLexer::tokenize // highlight HTML in PHP files
 
 Coinciding with the #LINK directive in the .syn files you must include() or
-require() the appropriate .tok file to produce tokens for the colors.
+require() the appropriate .php file to produce tokens for the colors.
 
 ### Custom Handlers
 ----------------------------------------------------------------------------
@@ -82,7 +82,7 @@ The custom handler functions are essentially mini-tokenizers which can
 themselves create tokens or act as wrapper functions to another syntax's
 tokenize function. In either case it should return an array of tokens just
 as the standard tokenize_* functions do. See handlevar in the bundled
-php.tok for an example of generating tokens without another tokenizer.
+php.php for an example of generating tokens without another tokenizer.
 
 
 ## Further Info

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Even if we don't use its functions we have to include the file so we have
- * access to them
- */
-include('html.tok');
-
 /*
 Bugs:
 http://bugs.php.net/48446 - T_INLINE_HTML is split into 2 parts if the HTML
