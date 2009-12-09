@@ -1,61 +1,90 @@
-## Getting Started
-###  Requirements
-  -----------------------------------------------------------------------------
-  -  PHP 5.2.x or greater
-  -  Linux only until PHP 5.3
+<a id="top" />
 
-###  Installing
-  -----------------------------------------------------------------------------
-  1.    chmod a+x install.sh
-  2.    ./install.sh  (sudo if you want to install for all users)
+* [Getting Started](#getting_started "Getting Started")
+  * [Requirements](#requirements "Requirements")
+  * [Installing](#installing "Installing")
+  * [Usage](#usage "Usage")
+  * [Themes](#uthemes "Themes")
+* [Extending](#extending "Extending")
+  * [Syntax Files](#synfiles "Syntax Files")
+  * [Handler Methods](#handlers "Handler Methods")
+  * [Tokenizers](#lexers "Tokenizers")
+  * [Themes](#themes "Themes")
+     * [Theme Inheritance](#theme_inh "Theme Inheritance")
+* [Further Info](#moreinfo "More Info")
 
-###  Usage
-  -----------------------------------------------------------------------------
+<h2 id="getting_started">Getting Started</h2>
+
+--------
+
+<h3 id="requirements">Requirements</h3>
+  *  PHP 5.2.x or greater
+  *  Linux only until PHP 5.3
+
+<h3 id="installing">Installing</h3>
+  1. `chmod a+x install.sh`
+  2. `./install.sh`  (sudo if you want to install for all users)
+
+<h3 id="usage">Usage</h3>
     man lzhighlight
 
-## Extending
--------------------------------------------------------------------------------
+<h3 id="uthemes">Themes</h3>
+**Setting the default theme**: To set the default theme just symlink your
+preferred theme to a folder named `syntax/` in the base of the repo:
 
-###  Syntax Files
------------------------------------------------------------------------------
+	ln -s themes/wombat/ syntax
+
+**Override default**: You can use the `-e` option to override the default
+
+	highlight -i somefile.php -e skittles_dark
+
+
+
+<h2 id="extending">Extending</h2>
+--------
+
+<h3 id="synfiles">Syntax Files</h3>
 To add a syntax to the highlighter you need to create two files: syntax.syn
 and syntax.php. syntax.syn will be a newline separated file containing the
-tokens and associated color (see man console_codes) OR HTML colors
-Example:
+tokens and associated color (see man console_codes) OR HTML colors  
+**Example:**
+
 	T_STRING 1;32
 	T_ELSEIF #FF00FF
-If the color is an hex color
 
-The tokens in syntax.syn must match the tokens produced by syntax.php. The
+The tokens in syntax.syn must match the tokens produced by `<syntax>.php`. The
 .syn files can link together by using the #LINK directive ie.,
+
 	T_STRING 1;32
 	T_ELSEIF 31
 	#LINK html.syn
 
 The color can also be another token which links multiple tokens together:
+
 	T_STRING        bgreen   // use human readable color
 	T_ENCAPS_STRING T_STRING // link T_ENCAPS_STRING to T_STRING
 
 ### Handler Methods
----------------------------------------------------------------------------
 Inside the tokenizers you can write methods to handle tokens directly if
 there is extra processing that needs to take place (making URLs links, etc)
 To do this, simply put the name of the function as the color:
+
 	HTML_STRING      HtmlLexer::handleString
 
 Also, you can specify whether or not it should happen only on HTML or
 console output. When you do this you must specify a fallback color to use.
+
 	HTML_STRING      HtmlLexer::handleString|STRING    HTMLONLY
 
 The function must always come first followed by a pipe and a color, which
 like above, can be another token name.
 
-### Tokenizers
------------------------------------------------------------------------------
+<h3 id="lexers">Tokenizers</h3>
 The <syntax>.php file at minimum must contain the camelized class <syntax>Lexer
 ie., PhpLexer. This class's tokenize method returns an array of tokenizations of
 the code passed to the function as a string. The array should follow the
 format of:
+
 	array(
 		0 => array(
 			'token' => 'T_STRING',
@@ -66,26 +95,34 @@ format of:
 			'string' => 'elseif'
 		)
 	)
-See the bundled php.php and php.syn for more examples.
 
-Each token may have a specialized handler for the color, see T_VARIABLE in
-php.syn and handlevar() in php.php as an example. Note that this function
-CAN point directly to another syntax's tokenizer ie.,
-	T_INLINE_HTML  HtmlLexer::tokenize // highlight HTML in PHP files
+See the bundled `tokenizers/php.php` and `syntax/php.syn` for more examples.
 
-Coinciding with the #LINK directive in the .syn files you must include() or
-require() the appropriate .php file to produce tokens for the colors.
+<h3 id="themes">Themes</h3>
+Themes exist in the (duh) `themes/` directory. Each theme has a directory under
+themes/ with the name of the theme, ie., `themes/wombat/`. Inside this directory
+is a `<lang>.syn` file for each syntax the theme supports.
 
-### Custom Handlers
-----------------------------------------------------------------------------
-The custom handler functions are essentially mini-tokenizers which can
-themselves create tokens or act as wrapper functions to another syntax's
-tokenize function. In either case it should return an array of tokens just
-as the standard tokenize_* functions do. See handlevar in the bundled
-php.php for an example of generating tokens without another tokenizer.
+* themes/
+   * wombat/
+      * php.syn
+      * default.syn
+      * ...
+   * skittles_dark/
+      * php.syn
+      * default.syn
+      * ...
+
+<h4 id="theme_inh">Theme Inheritance</h4>
+The simplest way to inherit from a theme is to simply create symlinks to another
+theme and override the default.syn file. However, there may be entries in that
+theme's `<lang>.syn` file that does not fallthrough to the default.syn so be
+careful.
 
 
-## Further Info
--------------------------------------------------------------------------------
+<h2 id="moreinfo">Further Info</h2>
+-----
 If you can't get it working or you found a bug, etc. then send an email to
 shawn AT shawnbiddle DOT com with the subject 'Syntax Highlighter'
+
+[Back to top](#top "Back to top")
