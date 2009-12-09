@@ -1,5 +1,5 @@
 <?php
-define('NORMAL', 1);
+define('NORMAL', 0);
 class DefaultLexer
 {
 	protected $starting_state = NORMAL;
