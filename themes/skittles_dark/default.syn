@@ -1,23 +1,23 @@
 // defaults that give a base for the other syntaxes
 
 // Global to the highlighter, not a token
-H_BG  #0C0C0C //#131313
-H_FG  #F8F8F8
+H_BG  #000
+H_FG  #F8F8F2
 
-H_NBG #333
+H_NBG #000
 H_NFG #FFF
 
-OP          #8AC6F2%b
-DELIM       #8F8F8F       //#e7f6da
-PPROC       #A6E22E       //#e5786d
-TYP         #66D9EF       //#CAE682
+OP          #f90
+DELIM       #8F8F8F
+PPROC       #A6E22E
+TYP         #66D9EF
 NORM        H_FG
-CONST       #AE81FF       //PREPROC
-STR         #75d142     //#777 #000
-COMM        #5D8D8F%i       //#99968B
-ERR         #960050%bi #1E0010
-IDENT       #d44d3e          //#CAE682
-KEY         #d44d3e%b      //OPERATOR
+CONST       #AE81FF
+STR         #75d142
+COMM        #5D8D8F%i
+ERR         #960050%bi
+IDENT       #C01414
+KEY         #C01414%b
 CNSTRCT     OP
 MOD         TYP
 SCOPE       TYP
