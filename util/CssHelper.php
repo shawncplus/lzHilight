@@ -9,18 +9,38 @@ class CssHelper
 	 */
 	public static function generateCss($identifiers)
 	{
+		print_r($identifiers);
 		$css = '';
 		foreach ($identifiers as $color => $token) {
-			$weight = '';
-			if(!preg_match('/^#?[0-9A-F]{3,6}$/i', $color) && !strpos($color, '|')) {
+			$decorators = '';
+			if(!preg_match('/^#?[0-9A-F]{3,6}$/i', $color) && !strpos($color, '|') && !strpos($color, '%')) {
 				$color = '#fff'; // default to white
 			} else if(strpos($color, '|')) {
 				list($fg, $bg) = explode('|', $color);
-				$css .= '.' . $token . '{color: ' . $fg . ';background-color: ' . $bg . ";}";
+				if (strpos($fg, '%')) {
+					list($fg, $decorator) = explode('%', $fg);
+					if (strpos($decorator, 'b') !== false) {
+						$decorators .= "font-weight:bold !important;";
+					}
+					if (strpos($decorator, 'i') !== false) {
+						$decorators .= "font-style:italic !important;";
+					}
+				}
+				$css .= '.' . $token . '{color: ' . $fg . ';background-color: ' . $bg . ';' . $decorators . '}';
 				continue;
 			}
 
-			$css .= '.' . $token . '{color:' . $color . ';' . $weight . "}";
+			if (strpos($color, '%')) {
+				list($color, $decorator) = explode('%', $color);
+				if (strpos($decorator, 'b') !== false) {
+					$decorators .= "font-weight:bold !important;";
+				}
+				if (strpos($decorator, 'i') !== false) {
+					$decorators .= "font-style:italic !important;";
+				}
+			}
+
+			$css .= '.' . $token . '{color:' . $color . ';' .$decorators . '}';
 		}
 		return $css;
 	}
@@ -39,7 +59,20 @@ class CssHelper
 		$tokenmap = array();
 		foreach($colormap as $token => $color) {
 			$selector = $token;
-			$color = is_array($color) ? $color['fg'] . '|' . $color['bg'] : $color;
+			if (is_array($color)) {
+				$icolor = '';
+				if (isset($color['bg'])) {
+					$icolor = $color['fg'] . '|' . $color['bg'];
+				}
+				if (isset($color['decorators']) && $color['decorators'] !== '') {
+					$icolor = isset($color['bg']) ?
+						str_replace('|', '%' . $color['decorators'] . '|', $icolor)
+						 :
+						($color['fg'] . '%' . $color['decorators']);
+				}
+				$color = $icolor;
+			}
+
 			if(isset($identifiers[$color]) && !isset($tokenmap[$token])) {
 				$tokenmap[$token] = $identifiers[$color];
 				continue;

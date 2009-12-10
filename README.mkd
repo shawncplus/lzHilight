@@ -64,6 +64,15 @@ The color can also be another token which links multiple tokens together:
 	T_STRING        bgreen   // use human readable color
 	T_ENCAPS_STRING T_STRING // link T_ENCAPS_STRING to T_STRING
 
+You can also apply bold/italics to a token using `%`:
+
+	COMMENT    #5D8D8F%i          // italic
+	OP         #8AC6F2%b          // bold
+
+Background colors are supported but only applied to HTML output:
+
+	ERROR      #960050%bi #1E0010 // bold, italic and custom bgcolor
+
 ### Handler Methods
 Inside the tokenizers you can write methods to handle tokens directly if
 there is extra processing that needs to take place (making URLs links, etc)

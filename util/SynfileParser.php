@@ -52,10 +52,17 @@ class SynfileParser
 				}
 				continue;
 			} // HTML color
-			else if(preg_match('/^#?[0-9A-F]{3,6}/i', $color)) {
+			else if(preg_match('/^#?[0-9A-F]{3,6}(%[ib])?/i', $color)) {
+				$decorators = '';
+				if (strpos($color, '%')) {
+					list($color, $decorators) = explode('%', $color);
+				}
 				$color = $html_col ? $color : $this->htmlToSgr($color);
 				if ($bg_color !== NULL && preg_match('/^#?[0-9A-F]{3,6}/i', $bg_color) && $html_col) {
-					$color_map[$token] = array('fg' => $color, 'bg' => $bg_color);
+					$color_map[$token] = array('fg' => $color, 'bg' => $bg_color, 'decorators' => $decorators);
+					continue;
+				} else if ($html_col && $decorators !== '') {
+					$color_map[$token] = array('fg' => $color, 'decorators' => $decorators);
 					continue;
 				}
 			} // Token link
