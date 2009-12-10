@@ -9,7 +9,6 @@ class CssHelper
 	 */
 	public static function generateCss($identifiers)
 	{
-		print_r($identifiers);
 		$css = '';
 		foreach ($identifiers as $color => $token) {
 			$decorators = '';

@@ -13,7 +13,7 @@ DELIM       #ffa500
 PPROC       #cd2828
 TYP         #bbb
 NORM        H_FG
-CONST       PREPROC
+CONST       PPROC
 STR         #ffa500
 COMM        #999
 ERR         #fff #f00
