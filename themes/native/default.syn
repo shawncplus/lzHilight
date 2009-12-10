@@ -10,10 +10,10 @@ H_NFG #FFF
 
 OP          #6ab825
 DELIM       #ffa500
-PPROC       #cd2828
+PPROC       #cd2828%b
 TYP         #bbb
 NORM        H_FG
-CONST       PPROC
+CONST       #3667a9
 STR         #ffa500
 COMM        #999
 ERR         #fff #f00

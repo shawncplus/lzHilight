@@ -110,6 +110,7 @@ class Highlighter
 						background-color:" . $this->color_map['H_NBG'] . ";
 						color:" . $this->color_map['H_NFG'] . ";
 				}
+				pre.code a {color:inherit !important}
 			</style>\n";
 		}
 

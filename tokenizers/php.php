@@ -40,6 +40,8 @@ class PhpLexer extends DefaultLexer
 
 	public static function handlestring($string)
 	{
+		$lstr = trim(strtolower($string));
+
 		if (self::$func_next) {
 			self::$function_table[]= trim($string);
 			$string = '<a id="' . trim($string) . '">' . $string . '</a>';
@@ -49,7 +51,12 @@ class PhpLexer extends DefaultLexer
 			$string = '<a href="#' . trim($string) .'">' . $string . '</a>';
 			return array(array('token' => 'FUNC', 'string' => $string, 'noentities' => 1));
 		} else if (function_exists(trim($string))) {
-			return array(array('token' => 'PHP_BUILTIN', 'string' => $string));
+			$string = '<a href="http://php.net/' . trim($string) . '">' . $string . '</a>';
+			return array(array('token' => 'PHP_BUILTIN', 'string' => $string, 'noentities' => 1));
+		} else if ($lstr === 'true' || $lstr === 'false') {
+			return array(array('token' => 'PHP_BOOLEAN', 'string' => $string));
+		} else if (in_array($lstr, array('null', 'bool', 'boolean', 'int', 'integer', 'real', 'double', 'float', 'string', 'object'))) {
+			return array(array('token' => 'PHP_TYPE', 'string' => $string));
 		} else {
 			return array(array('token' => 'PHP_NORMAL', 'string' => $string));
 		}
@@ -78,4 +85,4 @@ class PhpLexer extends DefaultLexer
 
 }
 
-/* vim: set syn=php: */
+/* vim: set syn=php nofen: */
