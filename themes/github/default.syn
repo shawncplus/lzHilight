@@ -1,0 +1,28 @@
+// Based on the color scheme used at Github
+
+H_BG  #fff
+H_FG  #000
+
+H_NBG #ECECEC
+H_NFG #AAA
+
+
+OP          H_FG
+DELIM       #999%b
+PPROC       #0086B3
+TYP         #bbb
+NORM        H_FG
+CONST       #099
+STR         #d14
+COMM        #998
+ERR         #fff #f00
+IDENT       #40ffff
+KEY         #000%b
+CNSTRCT     PPROC
+MOD         TYP
+SCOPE       TYP
+STRUC       TYP
+DOCBLOCK    #d14
+DOCTAG      DOCBLOCK
+FUNC        #900
+SPECIAL     KEY
