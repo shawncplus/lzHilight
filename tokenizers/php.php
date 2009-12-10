@@ -48,6 +48,8 @@ class PhpLexer extends DefaultLexer
 		} if (in_array(trim($string), self::$function_table)) {
 			$string = '<a href="#' . trim($string) .'">' . $string . '</a>';
 			return array(array('token' => 'FUNC', 'string' => $string, 'noentities' => 1));
+		} else if (function_exists(trim($string))) {
+			return array(array('token' => 'PHP_BUILTIN', 'string' => $string));
 		} else {
 			return array(array('token' => 'PHP_NORMAL', 'string' => $string));
 		}
