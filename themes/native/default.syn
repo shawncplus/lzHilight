@@ -1,0 +1,29 @@
+// Based on the Native vim colorscheme by Armin Ronacher
+// http://www.vim.org/scripts/script.php?script_id=1857
+
+H_BG  #222
+H_FG  #f2f2f2
+
+H_NBG #333
+H_NFG #FFF
+
+
+OP          #6ab825
+DELIM       #ffa500
+PPROC       #cd2828
+TYP         #bbb
+NORM        H_FG
+CONST       PREPROC
+STR         #ffa500
+COMM        #999
+ERR         #fff #f00
+IDENT       #40ffff
+KEY         OP
+CNSTRCT     OP
+MOD         TYP
+SCOPE       TYP
+STRUC       TYP
+DOCBLOCK    COMM
+DOCTAG      PPROC
+FUNC        #447fcf
+SPECIAL     #ffa500

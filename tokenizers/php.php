@@ -44,10 +44,10 @@ class PhpLexer extends DefaultLexer
 			self::$function_table[]= trim($string);
 			$string = '<a id="' . trim($string) . '">' . $string . '</a>';
 			self::$func_next = false;
-			return array(array('token' => 'H_FG', 'string' => $string, 'noentities' => 1));
+			return array(array('token' => 'FUNC', 'string' => $string, 'noentities' => 1));
 		} if (in_array(trim($string), self::$function_table)) {
 			$string = '<a href="#' . trim($string) .'">' . $string . '</a>';
-			return array(array('token' => 'H_FG', 'string' => $string, 'noentities' => 1));
+			return array(array('token' => 'FUNC', 'string' => $string, 'noentities' => 1));
 		} else {
 			return array(array('token' => 'PHP_NORMAL', 'string' => $string));
 		}
