@@ -1,7 +1,10 @@
 <?php
-
 require_once(dirname(__FILE__) . '/../autoload.php');
 
+/**
+ * Workhorse of the highlighter
+ * @uses CssHelper
+ */
 class Highlighter
 {
 	/**
@@ -68,8 +71,10 @@ class Highlighter
 			'code_wrap_tag', 'code_wrap_cls', 'write_style',
 		);
 
-		foreach ($options as $key => $value) {
-			if (in_array($key, $valid_props)) {
+		foreach ($options as $key => $value)
+		{
+			if (in_array($key, $valid_props))
+			{
 				$this->$key = $value;
 				$this->init_config[$key] = $value;
 			}
@@ -87,13 +92,14 @@ class Highlighter
 	public function highlight($begin = true)
 	{
 		$output = '';
-		if ($this->write_style) {
+		if ($this->write_style)
+		{
 			$output = '
 			<style type="text/css">
 				pre.code {
 					background-color:' . $this->color_map['H_BG'] . ';
 					border:2px solid #555;
-					overflow-x:scroll;
+					overflow-x:auto;
 					border-left:none;
 					position:relative;
 					padding-left:2px;
@@ -115,13 +121,16 @@ class Highlighter
 		}
 
 		// line numbering
-		if ($this->mode == 'html' && $begin) {
+		if ($this->mode == 'html' && $begin)
+		{
 			// add line numbering
-			if ($this->lines) {
+			if ($this->lines)
+			{
 				$lines = '';
 				$linecount = $this->lines;
 				$linewidth = strlen('' . $linecount) + 1;
-				for ($i = 1; $i <= $linecount; $i++) {
+				for ($i = 1; $i <= $linecount; $i++)
+				{
 					$lines .= '<span id="' . $i . '">' . str_repeat(' ', $linewidth - strlen('' . $i)) . $i . "</span>\n";
 				}
 				$output .= '<' . $this->line_wrap_tag . ' class="' . $this->line_wrap_cls . '">' . $lines . '</' . $this->line_wrap_tag . '>';
@@ -130,16 +139,21 @@ class Highlighter
 		}
 
 		$custom_func_prev_token = array();
-		foreach($this->token_sets as $tokenset) {
+		foreach ($this->token_sets as $tokenset)
+		{
 			$color = isset($this->color_map[$tokenset['token']]) ? $this->color_map[$tokenset['token']] : DEFAULT_COLOR;
 			$color = is_array($color) ? $color['fg'] : $color;
 
 			// our token requires a special handler function
-			if(strpos($color, '::') !== false) {
+			if (strpos($color, '::') !== false)
+			{
 				list($class, $method) = explode('::', $color);
-				if(!class_exists($class) || !method_exists($class, $method)) {
+				if (!class_exists($class) || !method_exists($class, $method))
+				{
 					$color = DEFAULT_COLOR;
-				} else {
+				}
+				else
+				{
 					// Support < 5.3 by creating an instance of the class
 					$inst = new $class;
 					$prev_token = isset($custom_func_prev_token[$color]) ? $custom_func_prev_token[$color] : NULL;
@@ -156,16 +170,23 @@ class Highlighter
 					continue;
 				}
 			}
-			if ($this->mode == 'html') {
-				if (!isset($tokenset['noentities'])) {
+
+			if ($this->mode == 'html')
+			{
+				if (!isset($tokenset['noentities']))
+				{
 					$tokenset['string'] = htmlentities($tokenset['string']);
 				}
 				$output .= '<b class="' . $this->identifiers['tokenmap'][$tokenset['token']] . '">'. $tokenset['string'] . '</b>';
-			} else {
+			}
+			else
+			{
 				$output .= '[' . $color . 'm' . $tokenset['string'] . '[0m';
 			}
 		}
-		if ($this->mode == 'html' && $begin) {
+
+		if ($this->mode == 'html' && $begin)
+		{
 			$output .= '</pre>';
 		}
 

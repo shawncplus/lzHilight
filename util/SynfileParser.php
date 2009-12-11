@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Utility class to parse <syntax>.syn files
+ */
 class SynfileParser
 {
 
@@ -35,7 +38,8 @@ class SynfileParser
 
 		$synfile = file($this->getSynfileDir() . $synfile);
 		$color_map = array();
-		foreach($synfile as $line_no => $line) {
+		foreach ($synfile as $line_no => $line)
+		{
 			if (trim($line) == '' || strpos($line, '//') === 0 ) continue;
 			$parts = preg_split('/\s+/', trim($line));
 
@@ -44,44 +48,60 @@ class SynfileParser
 			$bg_color = isset($parts[2]) ? $parts[2] : NULL;
 
 			// #LINK directive
-			if ($token == '#LINK') {
+			if ($token == '#LINK')
+			{
 				$linked_synfile = $color;
-				if(!in_array($linked_synfile, $linked_files)) {
+				if (!in_array($linked_synfile, $linked_files))
+				{
 					$linked_files[] = $linked_synfile;
 					$color_map = array_merge($color_map, $this->parse($linked_synfile, $html_col));
 				}
 				continue;
 			} // HTML color
-			else if(preg_match('/^#?[0-9A-F]{3,6}(%[ib])?/i', $color)) {
+			elseif (preg_match('/^#?[0-9A-F]{3,6}(%[ib])?/i', $color))
+			{
 				$decorators = '';
-				if (strpos($color, '%')) {
+				if (strpos($color, '%'))
+				{
 					list($color, $decorators) = explode('%', $color);
 				}
+
 				$color = $html_col ? $color : $this->htmlToSgr($color);
-				if ($bg_color !== NULL && preg_match('/^#?[0-9A-F]{3,6}/i', $bg_color) && $html_col) {
+				if ($bg_color !== NULL && preg_match('/^#?[0-9A-F]{3,6}/i', $bg_color) && $html_col)
+				{
 					$color_map[$token] = array('fg' => $color, 'bg' => $bg_color, 'decorators' => $decorators);
 					continue;
-				} else if ($html_col && $decorators !== '') {
+				}
+				elseif ($html_col && $decorators !== '')
+				{
 					$color_map[$token] = array('fg' => $color, 'decorators' => $decorators);
 					continue;
 				}
 			} // Token link
-			else if(preg_match('/[a-z_]/i', $color) && isset($color_map[$color])) {
+			elseif (preg_match('/[a-z_]/i', $color) && isset($color_map[$color]))
+			{
 				$color_map[$token] = $color_map[$color];
 				continue;
 			} // SGR Sequence
-			else if(array_key_exists($color, $sgr_colors)) {
+			elseif (array_key_exists($color, $sgr_colors))
+			{
 				$color = $sgr_colors[$color];
 			}
 			// handler function
-			else if(strpos($color, '|')) {
+			elseif (strpos($color, '|'))
+			{
 				$toggle = $bg_color;
 				list($custom_func, $backup) = explode('|', $color);
-				if($toggle == 'HTMLONLY' && $html_col) {
+				if ($toggle == 'HTMLONLY' && $html_col)
+				{
 					$color = $custom_func;
-				} else if($toggle == 'CONSONLY' && !$html_col) {
+				}
+				elseif ($toggle == 'CONSONLY' && !$html_col)
+				{
 					$color = $custom_func;
-				} else {
+				}
+				else
+				{
 					$color = (preg_match('/^[a-z_]+$/i', $backup)) ? $color_map[$backup] : $backup;
 				}
 			}
@@ -102,69 +122,88 @@ class SynfileParser
 	public function htmlToSgr($color)
 	{
 		$color = trim(str_replace('#', '', $color));
-		if (!preg_match('/^[0-9A-F]{3,6}$/i', $color)) {
-			return DEFAULT_COLOR;
-		}
+		if (!preg_match('/^[0-9A-F]{3,6}$/i', $color)) return DEFAULT_COLOR;
 
-		if(strlen($color) == 3) {
-			$color = $color[0] . $color[0] . $color[1] . $color[1] . $color[2] . $color[2];
-		}
+		if (strlen($color) == 3) $color = $color[0] . $color[0] . $color[1] . $color[1] . $color[2] . $color[2];
 
-		$colparts  = array_map('hexdec', array('red' => substr($color, 0, 2), 'green' => substr($color, 2, 2), 'blue' => substr($color, 4, 2)));
+		$colparts  = array_map('hexdec', array(
+			'red' => substr($color, 0, 2), 'green' => substr($color, 2, 2), 'blue' => substr($color, 4, 2)
+		));
 		$end_color = '';
 
 		$difference_threshold = $this->getDifferenceThreshold();
 		$bold = $this->getBoldThreshold();
 
-		switch (true) {
+		switch (true)
+		{
 			// yellow
 			case ($colparts['red'] > $colparts['blue'] && $colparts['green'] > $colparts['blue'] &&
 				abs($colparts['red'] - $colparts['green']) < $difference_threshold):
+			{
 				$end_color = '33';
-			if ($colparts['red'] > $bold || $colparts['green'] > $bold) {
-				$end_color = '1;' . $end_color;
+				if ($colparts['red'] > $bold || $colparts['green'] > $bold)
+				{
+					$end_color = '1;' . $end_color;
+				}
+				break;
 			}
-			break;
 			// cyan
 			case ($colparts['green'] > $colparts['red'] && $colparts['blue'] > $colparts['red'] &&
 				abs($colparts['green'] - $colparts['blue']) < $difference_threshold):
+			{
 				$end_color = '36';
-			if ($colparts['green'] > $bold || $colparts['blue'] > $bold) {
-				$end_color = '1;' . $end_color;
+				if ($colparts['green'] > $bold || $colparts['blue'] > $bold)
+				{
+					$end_color = '1;' . $end_color;
+				}
+				break;
 			}
-			break;
 			// magenta
 			case ($colparts['red'] > $colparts['green'] && $colparts['blue'] > $colparts['green'] &&
 				abs($colparts['red'] - $colparts['blue']) < $difference_threshold):
+			{
 				$end_color = '35';
-			if ($colparts['red'] > $bold || $colparts['blue'] > $bold) {
-				$end_color = '1;' . $end_color;
+				if ($colparts['red'] > $bold || $colparts['blue'] > $bold)
+				{
+					$end_color = '1;' . $end_color;
+				}
+				break;
 			}
-			break;
 			// red
-		case ($colparts['red'] > $colparts['green'] && $colparts['red'] > $colparts['blue']):
-			$end_color = '31';
-			if ($colparts['red'] > $bold) {
-				$end_color = '1;' . $end_color;
+			case ($colparts['red'] > $colparts['green'] && $colparts['red'] > $colparts['blue']):
+			{
+				$end_color = '31';
+				if ($colparts['red'] > $bold)
+				{
+					$end_color = '1;' . $end_color;
+				}
+				break;
 			}
-			break;
 			// green
-		case ($colparts['green'] > $colparts['red'] && $colparts['green'] > $colparts['blue']):
-			$end_color = '32';
-			if ($colparts['green'] > $bold) {
-				$end_color = '1;' . $end_color;
+			case ($colparts['green'] > $colparts['red'] && $colparts['green'] > $colparts['blue']):
+			{
+				$end_color = '32';
+				if ($colparts['green'] > $bold)
+				{
+					$end_color = '1;' . $end_color;
+				}
+				break;
 			}
-			break;
 			// blue
-		case ($colparts['blue'] > $colparts['green'] && $colparts['blue'] > $colparts['red']):
-			$end_color = '34';
-			if ($colparts['blue'] > $bold) {
-				$end_color = '1;' . $end_color;
+			case ($colparts['blue'] > $colparts['green'] && $colparts['blue'] > $colparts['red']):
+			{
+				$end_color = '34';
+				if ($colparts['blue'] > $bold)
+				{
+					$end_color = '1;' . $end_color;
+				}
+				break;
 			}
-			break;
-		default:
-			$end_color = '37';
-			break;
+			default:
+			{
+				$end_color = '37';
+				break;
+			}
 		}
 
 		return $end_color;

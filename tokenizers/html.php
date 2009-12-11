@@ -61,21 +61,28 @@ class HtmlLexer extends DefaultLexer
 
 		$inside_tag = false;
 
-		while(isset($output[$i])) {
+		while (isset($output[$i]))
+		{
 			$char = $output[$i++];
 			$new_state = $this->change_state($state, $char);
-			if($new_state !== $state) {
-				if($state === HTML_TAG_NAME) {
+			if ($new_state !== $state)
+			{
+				if ($state === HTML_TAG_NAME)
+				{
 					$current_tag = trim($cur_state_string);
 				}
 
-				if($state === HTML_END_SLASH) {
+				if ($state === HTML_END_SLASH)
+				{
 					$inside_tag = false;
-				} else if ($state == HTML_TAG_NAME) {
+				}
+				else if ($state == HTML_TAG_NAME) 
+				{
 					$inside_tag = true;
 				}
 
-				if($state === HTML_CONTENT) {
+				if ($state === HTML_CONTENT)
+				{
 					$ret_tokens = array_merge($ret_tokens, HtmlLexer::handleContent($current_tag, $cur_state_string));
 					$state = $new_state;
 					$cur_state_string = $char;
@@ -91,7 +98,8 @@ class HtmlLexer extends DefaultLexer
 		}
 
 		$starting_state = $this->tokens[$state];
-		if($state === HTML_CONTENT) {
+		if ($state === HTML_CONTENT)
+		{
 			return array_merge($ret_tokens, HtmlLexer::handleContent($current_tag, $cur_state_string));
 		}
 
@@ -101,10 +109,13 @@ class HtmlLexer extends DefaultLexer
 
 	public static function handleString($string)
 	{
-		if(preg_match('#^[\'"]http://#', $string)) {
+		if (preg_match('#^[\'"]http://#', $string))
+		{
 			$string = str_replace(array("'", '"'), array('',''), $string);
 			$string = '&quot;<a href="' . $string . '" class="STR">' . htmlentities($string) . '</a>';
-		} else {
+		}
+		else
+		{
 			return array(array('token' => 'STR', 'string' => $string));
 		}
 		return array(array('token' => 'STR', 'string' => $string, 'noentities' => 1));
@@ -113,7 +124,8 @@ class HtmlLexer extends DefaultLexer
 	public static function handleContent($tag, $content)
 	{
 		$tokens = NULL;
-		switch($tag) {
+		switch ($tag)
+		{
 			case 'tyle': // PHP retardation
 			case 'style':
 				$lexer = new CssLexer;

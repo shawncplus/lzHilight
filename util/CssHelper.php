@@ -1,4 +1,7 @@
 <?php
+/**
+ * Utility class for generating CSS
+ */
 class CssHelper
 {
 	/**
@@ -10,18 +13,25 @@ class CssHelper
 	public static function generateCss($identifiers)
 	{
 		$css = '';
-		foreach ($identifiers as $color => $token) {
+		foreach ($identifiers as $color => $token)
+		{
 			$decorators = '';
-			if(!preg_match('/^#?[0-9A-F]{3,6}$/i', $color) && !strpos($color, '|') && !strpos($color, '%')) {
+			if (!preg_match('/^#?[0-9A-F]{3,6}$/i', $color) && !strpos($color, '|') && !strpos($color, '%'))
+			{
 				$color = '#fff'; // default to white
-			} else if(strpos($color, '|')) {
+			}
+			elseif (strpos($color, '|'))
+			{
 				list($fg, $bg) = explode('|', $color);
-				if (strpos($fg, '%')) {
+				if (strpos($fg, '%'))
+				{
 					list($fg, $decorator) = explode('%', $fg);
-					if (strpos($decorator, 'b') !== false) {
+					if (strpos($decorator, 'b') !== false)
+					{
 						$decorators .= "font-weight:bold !important;";
 					}
-					if (strpos($decorator, 'i') !== false) {
+					if (strpos($decorator, 'i') !== false)
+					{
 						$decorators .= "font-style:italic !important;";
 					}
 				}
@@ -29,12 +39,15 @@ class CssHelper
 				continue;
 			}
 
-			if (strpos($color, '%')) {
+			if (strpos($color, '%'))
+			{
 				list($color, $decorator) = explode('%', $color);
-				if (strpos($decorator, 'b') !== false) {
+				if (strpos($decorator, 'b') !== false)
+				{
 					$decorators .= "font-weight:bold !important;";
 				}
-				if (strpos($decorator, 'i') !== false) {
+				if (strpos($decorator, 'i') !== false)
+				{
 					$decorators .= "font-style:italic !important;";
 				}
 			}
@@ -56,14 +69,19 @@ class CssHelper
 	{
 		$identifiers = array();
 		$tokenmap = array();
-		foreach($colormap as $token => $color) {
+		foreach ($colormap as $token => $color)
+		{
 			$selector = $token;
-			if (is_array($color)) {
+			if (is_array($color))
+			{
 				$icolor = '';
-				if (isset($color['bg'])) {
+				if (isset($color['bg']))
+				{
 					$icolor = $color['fg'] . '|' . $color['bg'];
 				}
-				if (isset($color['decorators']) && $color['decorators'] !== '') {
+
+				if (isset($color['decorators']) && $color['decorators'] !== '')
+				{
 					$icolor = isset($color['bg']) ?
 						str_replace('|', '%' . $color['decorators'] . '|', $icolor)
 						 :
@@ -72,13 +90,15 @@ class CssHelper
 				$color = $icolor;
 			}
 
-			if(isset($identifiers[$color]) && !isset($tokenmap[$token])) {
+			if (isset($identifiers[$color]) && !isset($tokenmap[$token]))
+			{
 				$tokenmap[$token] = $identifiers[$color];
 				continue;
 			}
 
 			$identifiers[$color] = $selector;
-			if(!isset($tokenmap[$token])) {
+			if (!isset($tokenmap[$token]))
+			{
 				$tokenmap[$token] = $identifiers[$color];
 			}
 		}

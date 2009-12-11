@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Simple string inflection utility class
+ */
 class Inflector
 {
 	/**

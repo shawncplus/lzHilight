@@ -14,18 +14,24 @@ class PhpLexer extends DefaultLexer
 	public function tokenize($output, &$starting_state = NULL)
 	{
 		$ret_tokens = array();
-		foreach (token_get_all($output) as $key => $token) {
-			if(is_array($token)) {
+		foreach (token_get_all($output) as $key => $token)
+		{
+			if (is_array($token))
+			{
 				$ret_tokens[] = array('token' => token_name($token[0]), 'string' => $token[1]);
-			} else if (strpos('=!+-/*.', trim($token)) !== false){
+			}
+			elseif (strpos('=!+-/*.', trim($token)) !== false)
+			{
 				$ret_tokens[] = array('token' => 'PHP_OPERATOR', 'string' => $token);
-			} else {
+			}
+			else
+			{
 				$ret_tokens[] = array('token' => 'T_NORMAL', 'string' => $token);
 			}
 		}
 		return $ret_tokens;
 	}
-	
+
 	public static function handleVar($string)
 	{
 		return !preg_match('#(\$)([a-z0-9_]+)#i', $string, $var) ? array() : array(
@@ -44,11 +50,16 @@ class PhpLexer extends DefaultLexer
 	{
 		$lstr = trim(strtolower($string));
 
-		if ($lstr === 'true' || $lstr === 'false') {
+		if ($lstr === 'true' || $lstr === 'false')
+		{
 			return array(array('token' => 'PHP_BOOLEAN', 'string' => $string));
-		} else if (in_array($lstr, array('null', 'bool', 'boolean', 'int', 'integer', 'real', 'double', 'float', 'string', 'object'))) {
+		}
+		elseif (in_array($lstr, array('null', 'bool', 'boolean', 'int', 'integer', 'real', 'double', 'float', 'string', 'object')))
+		{
 			return array(array('token' => 'PHP_TYPE', 'string' => $string));
-		} else {
+		}
+		else
+		{
 			return array(array('token' => 'PHP_NORMAL', 'string' => $string));
 		}
 	}
@@ -57,36 +68,48 @@ class PhpLexer extends DefaultLexer
 	{
 		$lstr = trim(strtolower($string));
 
-		if (self::$func_next) {
+		if (self::$func_next)
+		{
 			self::$function_table[]= trim($string);
 			$string = '<a id="' . trim($string) . '">' . $string . '</a>';
 			self::$func_next = false;
 			return array(array('token' => 'FUNC', 'string' => $string, 'noentities' => 1));
-		} if (in_array(trim($string), self::$function_table)) {
+		}
+		elseif (in_array(trim($string), self::$function_table))
+		{
 			$string = '<a href="#' . trim($string) .'">' . $string . '</a>';
 			return array(array('token' => 'FUNC', 'string' => $string, 'noentities' => 1));
-		} else if (function_exists(trim($string))) {
+		}
+		elseif (function_exists(trim($string)))
+		{
 			$string = '<a href="http://php.net/' . trim($string) . '">' . $string . '</a>';
 			return array(array('token' => 'PHP_BUILTIN', 'string' => $string, 'noentities' => 1));
-		} else {
+		}
+		else
+		{
 			return self::handleString($string);
 		}
 	}
 
 	public static function handleDocBlock($string)
 	{
-		if(strpos($string, '@') === false) {
+		if (strpos($string, '@') === false)
+		{
 			return array(array('token' => 'PHP_DOCBLOCK', 'string' => $string));
 		}
 
 		$doctoks = array();
-		foreach(explode("\n", $string) as $docpart) {
+		foreach (explode("\n", $string) as $docpart)
+		{
 			$doctag = array();
-			if(preg_match('#(^\s*\*\s+)(@[a-z]+)(:?\s*.+)$#i', $docpart, $doctag)) {
+			if (preg_match('#(^\s*\*\s+)(@[a-z]+)(:?\s*.+)$#i', $docpart, $doctag))
+			{
 				$doctoks[] = array('token' => 'PHP_DOCBLOCK', 'string' => $doctag[1]);
 				$doctoks[] = array('token' => 'PHP_DOCTAG',    'string' => $doctag[2]);
 				$doctoks[] = array('token' => 'PHP_DOCBLOCK', 'string' => $doctag[3]."\n");
-			} else {
+			}
+			else
+			{
 				$doctoks[] = array('token' => 'PHP_DOCBLOCK', 'string' => $docpart . (strpos($docpart, '*/') === false ? "\n" : ''));
 			}
 		}

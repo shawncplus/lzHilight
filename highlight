@@ -17,14 +17,16 @@ define('RESC_DIR', dirname(__FILE__) . '/');
 define('LIBDIR', 'tokenizers/');
 define('DEFAULT_COLOR', 37);
 
-if(!file_exists(RESC_DIR)) {
+if (!file_exists(RESC_DIR))
+{
 	die('[1;31mERROR:[0m RESC_DIR is not set or is invalid. Read the README for directions on setting it.'."\n");
 }
 
 
 $options  = getopt('i:s:lhvt:o:e:');
 
-if (empty($options) && count($argv) == 2) {
+if (empty($options) && count($argv) == 2)
+{
 	$options['i'] = $argv[1];
 }
 
@@ -35,11 +37,13 @@ $tabstop  = isset($options['t']) ? intval($options['t']) : 2;
 $html_out = isset($options['o']) ? $options['o'] : FALSE;
 $theme    = isset($options['e']) ? $options['e'] : NULL;
 
-if (isset($options['v']) && count($options['v']) >= 5) {
+if (isset($options['v']) && count($options['v']) >= 5)
+{
 	die("Sorry, this script doesn't moo.\n");
 }
 
-if(isset($options['h'])) {
+if (isset($options['h']))
+{
 	$thisfile = basename(__FILE__);
 	echo <<<HELP
 {$thisfile} -i <filename> [opts]
@@ -53,16 +57,22 @@ HELP;
 die;
 }
 
-if(!file_exists($filename) && $filename !== NULL) {
+if (!file_exists($filename) && $filename !== NULL)
+{
 	die($filename.": No such file or directory\n");
-} else if(is_dir($filename)) {
+}
+else if (is_dir($filename))
+{
 	die($filename.": Is a directory\n");
 }
 
-if ($filename !== NULL) {
+if ($filename !== NULL)
+{
 	$output = file($filename);
 	$lines = $lines ? count($output) : $lines;
-} else {
+}
+else
+{
 	$output = array();
 	while ($line = fgets(STDIN)) $output[] = $line;
 }
@@ -71,10 +81,14 @@ $line1  = $output[0];
 
 $output = implode('', $output);
 
-if ($syntax === NULL) {
-	if (strpos($line1, '#!/usr/bin/env') === 0) {
+if ($syntax === NULL)
+{
+	if (strpos($line1, '#!/usr/bin/env') === 0)
+	{
 		$syntax = @end(explode(' ', $line1));
-	} elseif (preg_match('~^#\!(/[a-z_0-9]+)+$~', $line1)) {
+	}
+	elseif (preg_match('~^#\!(/[a-z_0-9]+)+$~', $line1))
+	{
 		$syntax = @end(explode('/', $line1));
 	}
 }
@@ -84,12 +98,14 @@ $syntax = $syntax === NULL ? @end(explode('.', $filename)) : $syntax;
 $SYNDIR = $theme === NULL ? 'syntax/' : ('themes/' . $theme .'/');
 
 // No syntax file, just output without highlighting
-if (!file_exists(RESC_DIR . $SYNDIR . $syntax . '.syn')) {
+if (!file_exists(RESC_DIR . $SYNDIR . $syntax . '.syn'))
+{
 	$syntax = 'default';
 }
 
 $class = Inflector::camelize(strtolower($syntax . '_lexer'));
-if(!class_exists($class)) {
+if (!class_exists($class))
+{
 	die('You forgot to write the tokenizer function for syntax [' . $syntax . "]\n");
 }
 
@@ -107,7 +123,8 @@ $options = array(
 	'mode' => $html_out ? 'html' : 'cli',
 );
 
-if($options['mode'] == 'html') {
+if ($options['mode'] == 'html')
+{
 	$options['identifiers'] = CssHelper::getTokensetSelectors($color_map);
 	$options['write_style'] = true;
 	$options['lines'] = $lines;
@@ -117,22 +134,27 @@ $highlighter = new Highlighter($options);
 $output = $highlighter->highlight();
 
 // Non-html line numbering is done here
-if($lines || $tabstop !== 2) {
+if ($lines || $tabstop !== 2)
+{
 	$output = explode("\n", trim($output));
 	$linewidth = strlen((string)(count($output) + 1));
-	foreach($output as $lineno => $line_content){
+	foreach ($output as $lineno => $line_content)
+	{
 		// No support for line numbers in html output yet
-		if($lines && !$html_out) {
+		if ($lines && !$html_out)
+		{
 			$output[$lineno] = '[37m' . str_pad($lineno + 1, $linewidth, " ", STR_PAD_LEFT) . '[0m| ' . $line_content;
 		}
-		if($tabstop !== 2) {
+		if ($tabstop !== 2)
+		{
 			$output[$lineno] = str_replace("\t", str_repeat(' ', $tabstop), $output[$lineno]);
 		}
 	}
 	$output = implode("\n", $output);
 }
 
-if ($options['mode'] == 'html') {
+if ($options['mode'] == 'html')
+{
 	$fp = fopen($html_out, 'w+');
 	fwrite($fp, $output);
 	fclose($fp);

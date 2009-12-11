@@ -12,10 +12,12 @@ class DefaultLexer
 		$state = is_string($starting_state) ? array_search($starting_state, $this->tokens) : $this->starting_state;
 		$ret_tokens = array();
 		$cur_state_string = '';
-		while(isset($output[$i])) {
+		while (isset($output[$i]))
+		{
 			$char = $output[$i++];
 			$new_state = $this->change_state($state, $char);
-			if($new_state != $state) {
+			if ($new_state != $state)
+			{
 				$ret_tokens[] = array('token' => $this->tokens[$state], 'string' => $cur_state_string);
 				$state = $new_state;
 				$cur_state_string = $char;
@@ -30,14 +32,18 @@ class DefaultLexer
 
 	protected function change_state($state, $char)
 	{
-		if(!isset($this->state_table[$state])) {
+		if (!isset($this->state_table[$state]))
+		{
 			return $state;
 		}
-		foreach($this->state_table[$state] as $event => $output) {
-			if(is_int($event)) {
+		foreach ($this->state_table[$state] as $event => $output)
+		{
+			if (is_int($event))
+			{
 				return $this->change_state($output, $char);
 			}
-			if(preg_match('/'.$event.'/', $char)) {
+			if (preg_match('/'.$event.'/', $char))
+			{
 				return $output;
 			}
 		}
