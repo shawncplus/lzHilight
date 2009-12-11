@@ -17,6 +17,8 @@ class PhpLexer extends DefaultLexer
 		foreach (token_get_all($output) as $key => $token) {
 			if(is_array($token)) {
 				$ret_tokens[] = array('token' => token_name($token[0]), 'string' => $token[1]);
+			} else if (strpos('=!+-/*.', trim($token)) !== false){
+				$ret_tokens[] = array('token' => 'PHP_OPERATOR', 'string' => $token);
 			} else {
 				$ret_tokens[] = array('token' => 'T_NORMAL', 'string' => $token);
 			}
@@ -67,7 +69,7 @@ class PhpLexer extends DefaultLexer
 			$string = '<a href="http://php.net/' . trim($string) . '">' . $string . '</a>';
 			return array(array('token' => 'PHP_BUILTIN', 'string' => $string, 'noentities' => 1));
 		} else {
-			return array(array('token' => 'PHP_NORMAL', 'string' => $string));
+			return self::handleString($string);
 		}
 	}
 
