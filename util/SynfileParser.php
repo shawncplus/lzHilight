@@ -82,7 +82,7 @@ class SynfileParser
 				} else if($toggle == 'CONSONLY' && !$html_col) {
 					$color = $custom_func;
 				} else {
-					$color = (preg_match('/[a-z_]/i', $backup)) ? $color_map[$backup] : $backup;
+					$color = (preg_match('/^[a-z_]+$/i', $backup)) ? $color_map[$backup] : $backup;
 				}
 			}
 			$color_map[$token] = $color;

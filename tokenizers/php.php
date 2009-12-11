@@ -24,7 +24,7 @@ class PhpLexer extends DefaultLexer
 		return $ret_tokens;
 	}
 	
-	public static function handlevar($string)
+	public static function handleVar($string)
 	{
 		return !preg_match('#(\$)([a-z0-9_]+)#i', $string, $var) ? array() : array(
 			array('token' => 'T_VAR_TOKEN', 'string' => $var[1]),
@@ -32,13 +32,26 @@ class PhpLexer extends DefaultLexer
 		);
 	}
 
-	public static function handlefunc($string)
+	public static function handleFunc($string)
 	{
 		self::$func_next = true;
 		return array(array('token' => 'PHP_FUNCTION', 'string' => $string));
 	}
 
-	public static function handlestring($string)
+	public static function handleString($string)
+	{
+		$lstr = trim(strtolower($string));
+
+		if ($lstr === 'true' || $lstr === 'false') {
+			return array(array('token' => 'PHP_BOOLEAN', 'string' => $string));
+		} else if (in_array($lstr, array('null', 'bool', 'boolean', 'int', 'integer', 'real', 'double', 'float', 'string', 'object'))) {
+			return array(array('token' => 'PHP_TYPE', 'string' => $string));
+		} else {
+			return array(array('token' => 'PHP_NORMAL', 'string' => $string));
+		}
+	}
+
+	public static function handleStringHtml($string)
 	{
 		$lstr = trim(strtolower($string));
 
@@ -53,16 +66,12 @@ class PhpLexer extends DefaultLexer
 		} else if (function_exists(trim($string))) {
 			$string = '<a href="http://php.net/' . trim($string) . '">' . $string . '</a>';
 			return array(array('token' => 'PHP_BUILTIN', 'string' => $string, 'noentities' => 1));
-		} else if ($lstr === 'true' || $lstr === 'false') {
-			return array(array('token' => 'PHP_BOOLEAN', 'string' => $string));
-		} else if (in_array($lstr, array('null', 'bool', 'boolean', 'int', 'integer', 'real', 'double', 'float', 'string', 'object'))) {
-			return array(array('token' => 'PHP_TYPE', 'string' => $string));
 		} else {
 			return array(array('token' => 'PHP_NORMAL', 'string' => $string));
 		}
 	}
 
-	public static function handle_docblock($string)
+	public static function handleDocBlock($string)
 	{
 		if(strpos($string, '@') === false) {
 			return array(array('token' => 'PHP_DOCBLOCK', 'string' => $string));
@@ -82,7 +91,5 @@ class PhpLexer extends DefaultLexer
 
 		return $doctoks;
 	}
-
 }
-
 /* vim: set syn=php nofen: */
