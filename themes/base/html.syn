@@ -1,5 +1,6 @@
 #LINK default.syn
 #LINK css.syn
+#LINK js.syn
 
 HTML_CONTENT      NORM
 HTML_AMP          HTML_CONTENT

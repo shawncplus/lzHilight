@@ -15,6 +15,25 @@ function add($a, $b)
 	div#test > p.someclass { bad-property: "Blah"; text-decoration: none; }
 	</style>
 	<script type="text/javascript" src="dummy.js"></script>
+	<script type="text/javascript">
+	var someObj = {
+		/**
+		 * Check out this sweet method
+		 */
+		someFunc : function (arg1, arg2)
+		{
+			while (arg1) {
+				if (arg2 !== undefined) {
+					[x, y, z] = arg2.split(',');
+				}
+			}
+		},
+
+		someProp : false,
+		anotherProp : 0.2
+	};
+	var someInstance = new someObj();
+	</script>
 </head>
 <body>
 	<h1><?php echo add(1, 2) ?></h1>

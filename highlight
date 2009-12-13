@@ -33,7 +33,7 @@ if (empty($options) && count($argv) == 2)
 $filename = isset($options['i']) ? $options['i'] : NULL;
 $syntax   = isset($options['s']) ? $options['s'] : NULL;
 $lines    = isset($options['l']);
-$tabstop  = isset($options['t']) ? intval($options['t']) : 2;
+$tabstop  = isset($options['t']) ? intval($options['t']) : NULL;
 $html_out = isset($options['o']) ? $options['o'] : FALSE;
 $theme    = isset($options['e']) ? $options['e'] : NULL;
 
@@ -134,7 +134,7 @@ $highlighter = new Highlighter($options);
 $output = $highlighter->highlight();
 
 // Non-html line numbering is done here
-if ($lines || $tabstop !== 2)
+if ($lines || $tabstop !== NULL)
 {
 	$output = explode("\n", trim($output));
 	$linewidth = strlen((string)(count($output) + 1));
@@ -145,7 +145,7 @@ if ($lines || $tabstop !== 2)
 		{
 			$output[$lineno] = '[37m' . str_pad($lineno + 1, $linewidth, " ", STR_PAD_LEFT) . '[0m| ' . $line_content;
 		}
-		if ($tabstop !== 2)
+		if ($tabstop !== NULL)
 		{
 			$output[$lineno] = str_replace("\t", str_repeat(' ', $tabstop), $output[$lineno]);
 		}

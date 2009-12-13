@@ -14,7 +14,7 @@ define('JS_BCOMMENT',  12);
 
 class JsLexer extends DefaultLexer
 {
-	protected static $keywords     = 'void,function,throw,var,with';
+	protected static $keywords     = 'void,function,throw,with';
 	protected static $constants    = 'true,false,null';
 	protected static $conditional  = 'if,else';
 	protected static $repeat       = 'do,while,for';
@@ -22,7 +22,7 @@ class JsLexer extends DefaultLexer
 	protected static $statement    = 'try,catch,throw,with,finally';
 	protected static $operators    = 'in,instanceof,let,typeof';
 	protected static $labels       = 'case,default';
-	protected static $global_objects = 'array,boolean,date,function,infinity,javaarray,javaclass,javaobject,javapackage,math,number,nan,object,packages,regexp,string,undefined,java,netscape,sun';
+	protected static $global_objects = 'array,boolean,date,infinity,javaarray,javaclass,javaobject,javapackage,math,number,nan,object,packages,regexp,string,undefined,java,netscape,sun,var';
 	protected static $exceptions   = 'error,evalerror,rangeerror,referenceerror,syntaxerror,typeerror,urierror';
 	protected static $mem_ops      = 'new,delete';
 

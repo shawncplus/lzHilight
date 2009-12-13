@@ -132,6 +132,12 @@ class HtmlLexer extends DefaultLexer
 				$tokens = $lexer->tokenize($content);
 				unset($lexer);
 				break;
+			case 'cript':
+			case 'script':
+				$lexer = new JsLexer;
+				$tokens = $lexer->tokenize($content);
+				unset($lexer);
+				break;
 			default:
 				$tokens = array(array('token' => 'HTML_CONTENT', 'string' => $content));
 				break;
