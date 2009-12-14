@@ -14,6 +14,30 @@ class SynfileParser
 	private $bold_threshold = 0xA0;
 	/**#@-*/
 
+	private static $_color_cache = array();
+
+	private static $basic16 = array
+			(
+				array( 0x00, 0x00, 0x00 ), // 0
+				array( 0xCD, 0x00, 0x00 ), // 1
+				array( 0x00, 0xCD, 0x00 ), // 2
+				array( 0xCD, 0xCD, 0x00 ), // 3
+				array( 0x00, 0x00, 0xEE ), // 4
+				array( 0xCD, 0x00, 0xCD ), // 5
+				array( 0x00, 0xCD, 0xCD ), // 6
+				array( 0xE5, 0xE5, 0xE5 ), // 7
+				array( 0x7F, 0x7F, 0x7F ), // 8
+				array( 0xFF, 0x00, 0x00 ), // 9
+				array( 0x00, 0xFF, 0x00 ), // 10
+				array( 0xFF, 0xFF, 0x00 ), // 11
+				array( 0x5C, 0x5C, 0xFF ), // 12
+				array( 0xFF, 0x00, 0xFF ), // 13
+				array( 0x00, 0xFF, 0xFF ), // 14
+				array( 0xFF, 0xFF, 0xFF )  // 15
+			);
+
+	private static $valuerange = array( 0x00, 0x5F, 0x87, 0xAF, 0xD7, 0xFF );
+
 	/**
 	 * Parse a syntax file into a color map to be used by the highlight function.
 	 * This is recursive to allow #LINK directives in syntax files.
@@ -66,7 +90,7 @@ class SynfileParser
 					list($color, $decorators) = explode('%', $color);
 				}
 
-				$color = $html_col ? $color : $this->htmlToSgr($color);
+				$color = $html_col ? $color : self::htmlToSgr($color);
 				if ($bg_color !== NULL && preg_match('/^#?[0-9A-F]{3,6}/i', $bg_color) && $html_col)
 				{
 					$color_map[$token] = array('fg' => $color, 'bg' => $bg_color, 'decorators' => $decorators);
@@ -119,94 +143,91 @@ class SynfileParser
 	 * @param string HTML color to convert
 	 * @return string SGR sequence
 	 */
-	public function htmlToSgr($color)
+	public static function htmlToSgr($color)
 	{
+		if (isset(self::$_color_cache[$color]))
+		{
+			return self::$_color_cache[$color];
+		}
+
 		$color = trim(str_replace('#', '', $color));
 		if (!preg_match('/^[0-9A-F]{3,6}$/i', $color)) return DEFAULT_COLOR;
 
 		if (strlen($color) == 3) $color = $color[0] . $color[0] . $color[1] . $color[1] . $color[2] . $color[2];
 
-		$colparts  = array_map('hexdec', array(
-			'red' => substr($color, 0, 2), 'green' => substr($color, 2, 2), 'blue' => substr($color, 4, 2)
-		));
-		$end_color = '';
+		$colparts  = array_map('hexdec', array(substr($color, 0, 2), substr($color, 2, 2), substr($color, 4, 2)));
+		$xterm = self::rgb2xterm($colparts);
+		self::$_color_cache[$color] = $xterm;
+		return $xterm;
+	}
 
-		$difference_threshold = $this->getDifferenceThreshold();
-		$bold = $this->getBoldThreshold();
+	// convert an xterm color value (0-253) to 3 unsigned chars rgb
+	public static function xterm2rgb($color)
+	{
+		$rgb = array();
+		// 16 basic colors
 
-		switch (true)
+		// 16 basic colors
+		if($color<16)
 		{
-			// yellow
-			case ($colparts['red'] > $colparts['blue'] && $colparts['green'] > $colparts['blue'] &&
-				abs($colparts['red'] - $colparts['green']) < $difference_threshold):
+			$rgb[0] = self::$basic16[$color][0];
+			$rgb[1] = self::$basic16[$color][1];
+			$rgb[2] = self::$basic16[$color][2];
+		}
+
+		// color cube color
+		if($color>=16 && $color<=232)
+		{
+			$color-=16;
+			$rgb[0] = self::$valuerange[($color/36)%6];
+			$rgb[1] = self::$valuerange[($color/6)%6];
+			$rgb[2] = self::$valuerange[$color%6];
+		}
+
+		// gray tone
+		if($color>=233 && $color<=253)
+		{
+			$rgb[0] = $rgb[1] = $rgb[2] = 8+($color-232)*0x0a;
+		}
+		return $rgb;
+	}
+
+	// fill the colortable for use with rgb2xterm
+	public static function maketable()
+	{
+		$colortable = array();
+		for($c=0;$c<=253;$c++)
+		{
+			$rgb = self::xterm2rgb($c);
+			$colortable[$c][0] = $rgb[0];
+			$colortable[$c][1] = $rgb[1];
+			$colortable[$c][2] = $rgb[2];
+		}
+		return $colortable;
+	}
+
+	// selects the nearest xterm color for a 3xBYTE rgb value
+	public static function rgb2xterm($rgb)
+	{
+		$best_match=0;
+
+		$colortable = self::maketable();
+
+		$smallest_distance = 10000000000.0;
+
+		for($c=0;$c<=253;$c++)
+		{
+			$d = pow($colortable[$c][0]-$rgb[0],2.0) +
+				pow($colortable[$c][1]-$rgb[1],2.0) +
+				pow($colortable[$c][2]-$rgb[2],2.0);
+			if($d<$smallest_distance)
 			{
-				$end_color = '33';
-				if ($colparts['red'] > $bold || $colparts['green'] > $bold)
-				{
-					$end_color = '1;' . $end_color;
-				}
-				break;
-			}
-			// cyan
-			case ($colparts['green'] > $colparts['red'] && $colparts['blue'] > $colparts['red'] &&
-				abs($colparts['green'] - $colparts['blue']) < $difference_threshold):
-			{
-				$end_color = '36';
-				if ($colparts['green'] > $bold || $colparts['blue'] > $bold)
-				{
-					$end_color = '1;' . $end_color;
-				}
-				break;
-			}
-			// magenta
-			case ($colparts['red'] > $colparts['green'] && $colparts['blue'] > $colparts['green'] &&
-				abs($colparts['red'] - $colparts['blue']) < $difference_threshold):
-			{
-				$end_color = '35';
-				if ($colparts['red'] > $bold || $colparts['blue'] > $bold)
-				{
-					$end_color = '1;' . $end_color;
-				}
-				break;
-			}
-			// red
-			case ($colparts['red'] > $colparts['green'] && $colparts['red'] > $colparts['blue']):
-			{
-				$end_color = '31';
-				if ($colparts['red'] > $bold)
-				{
-					$end_color = '1;' . $end_color;
-				}
-				break;
-			}
-			// green
-			case ($colparts['green'] > $colparts['red'] && $colparts['green'] > $colparts['blue']):
-			{
-				$end_color = '32';
-				if ($colparts['green'] > $bold)
-				{
-					$end_color = '1;' . $end_color;
-				}
-				break;
-			}
-			// blue
-			case ($colparts['blue'] > $colparts['green'] && $colparts['blue'] > $colparts['red']):
-			{
-				$end_color = '34';
-				if ($colparts['blue'] > $bold)
-				{
-					$end_color = '1;' . $end_color;
-				}
-				break;
-			}
-			default:
-			{
-				$end_color = '37';
-				break;
+				$smallest_distance = $d;
+				$best_match=$c;
 			}
 		}
 
-		return $end_color;
+		return $best_match;
 	}
 
 	public function getDifferenceThreshold()
