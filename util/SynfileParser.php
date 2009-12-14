@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Utility class to parse <syntax>.syn files
+ * Utility class to parse <syntax>.syn files.
+ * Uses a PHP port of xterm color approximation originally written by
+ * Wolfgang Frisch (xororand AT unfoog de) http://www.frexx.de/xterm-256-notes/
  */
 class SynfileParser
 {
