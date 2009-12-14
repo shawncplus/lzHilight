@@ -85,11 +85,11 @@ if ($syntax === NULL)
 {
 	if (strpos($line1, '#!/usr/bin/env') === 0)
 	{
-		$syntax = @end(explode(' ', $line1));
+		$syntax = trim(@end(explode(' ', $line1)));
 	}
 	elseif (preg_match('~^#\!(/[a-z_0-9]+)+$~', $line1))
 	{
-		$syntax = @end(explode('/', $line1));
+		$syntax = trim(@end(explode('/', $line1)));
 	}
 }
 
