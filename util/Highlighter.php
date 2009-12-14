@@ -181,7 +181,7 @@ class Highlighter
 			}
 			else
 			{
-				$output .= '[' . $color . 'm' . $tokenset['string'] . '[0m';
+				$output .= "\033[38;5;" . $color . 'm' . $tokenset['string'] . "\033[0m";
 			}
 		}
 
