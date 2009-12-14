@@ -159,6 +159,7 @@ T_USE           PHP_KEYWORD
 T_VAR_TOKEN     #008080
 T_VAR_NAME      T_VAR_TOKEN
 PHP_BUILTIN     PPROC
+PHP_BOOLEAN     CONST
 
 // grab the tokens/colors from the HTML tokenizer
 #LINK html.syn

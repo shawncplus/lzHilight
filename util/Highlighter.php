@@ -98,13 +98,15 @@ class Highlighter
 			<style type="text/css">
 				pre.code {
 					background-color:' . $this->color_map['H_BG'] . ';
+					color:' . $this->color_map['H_FG'] . ';
 					border:2px solid #555;
 					overflow-x:auto;
 					border-left:none;
 					position:relative;
 					padding-left:2px;
 					margin: 0;
-					float:left
+					float:left;
+					width: 800px;
 				}
 				pre.code b{font-weight:normal;}'
 					. CssHelper::generateCss($this->identifiers['colormap']) . "
@@ -177,7 +179,15 @@ class Highlighter
 				{
 					$tokenset['string'] = htmlentities($tokenset['string']);
 				}
-				$output .= '<b class="' . $this->identifiers['tokenmap'][$tokenset['token']] . '">'. $tokenset['string'] . '</b>';
+
+				if ($this->identifiers['tokenmap'][$tokenset['token']] === 'H_FG')
+				{
+					$output .= $tokenset['string'];
+				}
+				else
+				{
+					$output .= '<b class="' . $this->identifiers['tokenmap'][$tokenset['token']] . '">'. $tokenset['string'] . '</b>';
+				}
 			}
 			else
 			{
