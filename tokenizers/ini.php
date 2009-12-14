@@ -22,12 +22,16 @@ class IniLexer extends DefaultLexer
 		INI_SECTION    => array('\]' => INI_BRACE),
 		INI_COMMENT    => array("[\n\r]" => INI_WHITESPACE),
 		INI_KEY        => array('\=' => INI_EQUAL, "[ \t]" => INI_I_WHITESPACE, '[^\w\-\.]' => INI_ERROR),
-		INI_EQUAL      => array('\'' => INI_STRING_S, '"' => INI_STRING_D, '[\.\d]' => INI_VAL_I, "[ \t]" => INI_I_WHITESPACE, "[^ \t]" => INI_VAL_S),
+		INI_EQUAL      => array(
+			"[\n\r]" => INI_WHITESPACE, '\'' => INI_STRING_S, '"' => INI_STRING_D,
+			'[\.\d]' => INI_VAL_I, 	"[ \t]" => INI_I_WHITESPACE, "[^ \t]" => INI_VAL_S
+		),
 		INI_STRING_S   => array('\'' => INI_END_QUOTE),
 		INI_STRING_D   => array('"' => INI_END_QUOTE),
 		INI_VAL_I      => array('\s' => INI_WHITESPACE),
 		INI_I_WHITESPACE => array(
-			'\'' => INI_STRING_S, '"' => INI_STRING_D, '\=' => INI_EQUAL, '\d' => INI_VAL_I, "[^ \t]" => INI_VAL_S
+			"[\n\r]" => INI_WHITESPACE, '\'' => INI_STRING_S, '"' => INI_STRING_D,
+			'\=' => INI_EQUAL, '\d' => INI_VAL_I, "[^ \t]" => INI_VAL_S
 		),
 		INI_VAL_S      => array(';' => INI_COMMENT, "[\n\r]" => INI_WHITESPACE),
 		INI_END_QUOTE  => array(INI_WHITESPACE),
