@@ -34,7 +34,7 @@ class CssLexer extends DefaultLexer
 		CSS_MEASURE     => array(';'  => CSS_BLOCK,      '\'' => CSS_STRING_S, '"'  => CSS_STRING_D, '\}' => CSS_CLOSE_BRACE ),
 		CSS_STRING_S    => array('\'' => CSS_MEASURE),
 		CSS_STRING_D    => array('"'  => CSS_MEASURE),
-		CSS_COMMENT     => array('\*' => CSS_COMM_STAR, '\/' => CSS_COMM_END),
+		CSS_COMMENT     => array('\*' => CSS_COMM_STAR,),
 		CSS_COMM_STAR   => array('\/' => CSS_COMM_END,   '.'  => CSS_COMMENT),
 		CSS_OPEN_BRACE  => array('\s' => CSS_BLOCK,      '\w' => CSS_PROPERTY, '\}' => CSS_CLOSE_BRACE),
 		CSS_CLOSE_BRACE => array('\w' => CSS_IDENTIFIER, '\/' => CSS_COMMENT,  '#'  => CSS_ID, '\.' => CSS_CLASS, '\s' => CSS_WHITESPACE),
