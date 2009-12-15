@@ -197,7 +197,20 @@ class Highlighter
 		return $output;
 	}
 
-	public function getStyle($identifiers, $colormap)
+	/**
+	 * Fetch user styles.
+	 * User styles may have variables in them in the format of:
+	 * <code>
+	 *   $TOKEN
+	 * </code>
+	 * Ie., pre.code { background-color: $H_FG; }
+	 * Which will be replaced by the associated token in the color map
+	 *
+	 * @param array $identifiers {@see CssHelper::getTokensetSelectors}
+	 * @param array $colormap {@see SynfileParser::parse}
+	 * @return string
+	 */
+	public function getStyle(array $identifiers, array $colormap)
 	{
 		$output  = '<style type="text/css">';
 		$output .= preg_replace('/\$([A-Z_]+)/e', "\$colormap[\"\\1\"]", $this->style);
@@ -206,6 +219,10 @@ class Highlighter
 		return $output;
 	}
 
+	/**
+	 * Mutator for style
+	 * @param string $style
+	 */
 	public function setStyle($style)
 	{
 		$this->style = $style;
