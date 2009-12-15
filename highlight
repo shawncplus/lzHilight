@@ -130,7 +130,15 @@ if ($options['mode'] == 'html')
 	$options['identifiers'] = CssHelper::getTokensetSelectors($color_map);
 	$options['write_style'] = true;
 	$options['lines'] = $lines;
-	$options['style'] = file_get_contents(RESC_DIR . $SYNDIR . 'default.css');
+
+	$syntax_style  = RESC_DIR . $SYNDIR . $syntax . '.css';
+	$default_style = RESC_DIR . $SYNDIR . 'default.css';
+
+	$custom_style = file_exists($syntax_style) ? $syntax_style : (file_exists($default_style) ? $default_style : false);
+	if ($custom_style)
+	{
+		$options['style'] = file_get_contents($custom_style);
+	}
 	$options['reduce'] = $reduce;
 }
 
