@@ -12,31 +12,28 @@ class SynfileParser
 	 * basic options
 	 */
 	private $synfile_dir = './';
-	private $difference_threshold = 0x70;
-	private $bold_threshold = 0xA0;
 	/**#@-*/
 
 	private static $_color_cache = array();
 
-	private static $basic16 = array
-			(
-				array( 0x00, 0x00, 0x00 ), // 0
-				array( 0xCD, 0x00, 0x00 ), // 1
-				array( 0x00, 0xCD, 0x00 ), // 2
-				array( 0xCD, 0xCD, 0x00 ), // 3
-				array( 0x00, 0x00, 0xEE ), // 4
-				array( 0xCD, 0x00, 0xCD ), // 5
-				array( 0x00, 0xCD, 0xCD ), // 6
-				array( 0xE5, 0xE5, 0xE5 ), // 7
-				array( 0x7F, 0x7F, 0x7F ), // 8
-				array( 0xFF, 0x00, 0x00 ), // 9
-				array( 0x00, 0xFF, 0x00 ), // 10
-				array( 0xFF, 0xFF, 0x00 ), // 11
-				array( 0x5C, 0x5C, 0xFF ), // 12
-				array( 0xFF, 0x00, 0xFF ), // 13
-				array( 0x00, 0xFF, 0xFF ), // 14
-				array( 0xFF, 0xFF, 0xFF )  // 15
-			);
+	private static $basic16 = array(
+		array( 0x00, 0x00, 0x00 ), // 0
+		array( 0xCD, 0x00, 0x00 ), // 1
+		array( 0x00, 0xCD, 0x00 ), // 2
+		array( 0xCD, 0xCD, 0x00 ), // 3
+		array( 0x00, 0x00, 0xEE ), // 4
+		array( 0xCD, 0x00, 0xCD ), // 5
+		array( 0x00, 0xCD, 0xCD ), // 6
+		array( 0xE5, 0xE5, 0xE5 ), // 7
+		array( 0x7F, 0x7F, 0x7F ), // 8
+		array( 0xFF, 0x00, 0x00 ), // 9
+		array( 0x00, 0xFF, 0x00 ), // 10
+		array( 0xFF, 0xFF, 0x00 ), // 11
+		array( 0x5C, 0x5C, 0xFF ), // 12
+		array( 0xFF, 0x00, 0xFF ), // 13
+		array( 0x00, 0xFF, 0xFF ), // 14
+		array( 0xFF, 0xFF, 0xFF )  // 15
+	);
 
 	private static $valuerange = array( 0x00, 0x5F, 0x87, 0xAF, 0xD7, 0xFF );
 
@@ -153,9 +150,12 @@ class SynfileParser
 		}
 
 		$color = trim(str_replace('#', '', $color));
-		if (!preg_match('/^[0-9A-F]{3,6}$/i', $color)) return DEFAULT_COLOR;
+		if (!preg_match('/^[0-9A-F]{3,6}$/i', $color))
+		{
+			return DEFAULT_COLOR;
+		}
 
-		if (strlen($color) == 3) $color = $color[0] . $color[0] . $color[1] . $color[1] . $color[2] . $color[2];
+		$color = strlen($color) == 3 ? (str_repeat($color[0], 2) . str_repeat($color[1], 2) . str_repeat($color[2], 2)) : $color;
 
 		$colparts  = array_map('hexdec', array(substr($color, 0, 2), substr($color, 2, 2), substr($color, 4, 2)));
 		$xterm = self::rgb2xterm($colparts);
@@ -163,66 +163,64 @@ class SynfileParser
 		return $xterm;
 	}
 
-	// convert an xterm color value (0-253) to 3 unsigned chars rgb
+	/**
+	* Convert an xterm color value (0-253) to the appropriate RGB values
+	* @param integer $color xterm color
+	* @return array [r, g, b]
+	 */
 	public static function xterm2rgb($color)
 	{
 		$rgb = array();
-		// 16 basic colors
 
-		// 16 basic colors
-		if($color<16)
+		if($color < 16)
 		{
-			$rgb[0] = self::$basic16[$color][0];
-			$rgb[1] = self::$basic16[$color][1];
-			$rgb[2] = self::$basic16[$color][2];
+			return self::$basic16[$color];
 		}
 
 		// color cube color
-		if($color>=16 && $color<=232)
+		if($color >= 16 && $color <= 232)
 		{
-			$color-=16;
-			$rgb[0] = self::$valuerange[($color/36)%6];
-			$rgb[1] = self::$valuerange[($color/6)%6];
-			$rgb[2] = self::$valuerange[$color%6];
+			$color -= 16;
+			$rgb = array(self::$valuerange[($color / 36) % 6], self::$valuerange[($color / 6)  % 6], self::$valuerange[$color  % 6]);
 		}
 
 		// gray tone
-		if($color>=233 && $color<=253)
+		if($color >= 233 && $color <= 253)
 		{
-			$rgb[0] = $rgb[1] = $rgb[2] = 8+($color-232)*0x0a;
+			$rgb[0] = $rgb[1] = $rgb[2] = 8 + ($color - 232) * 0x0a;
 		}
 		return $rgb;
 	}
 
-	// fill the colortable for use with rgb2xterm
+	/**
+	 * Fill the colortable for use with rgb2xterm
+	 * @return array
+	 */
 	public static function maketable()
 	{
 		$colortable = array();
-		for($c=0;$c<=253;$c++)
+		for($c = 0;$c <= 253;$c++)
 		{
-			$rgb = self::xterm2rgb($c);
-			$colortable[$c][0] = $rgb[0];
-			$colortable[$c][1] = $rgb[1];
-			$colortable[$c][2] = $rgb[2];
+			$colortable[$c] = self::xterm2rgb($c);
 		}
 		return $colortable;
 	}
 
-	// selects the nearest xterm color for a 3xBYTE rgb value
+	/**
+	* Selects the nearest xterm color for a 3xBYTE rgb value
+	* @param array $rgb [r, g, b]
+	* @return integer
+	 */
 	public static function rgb2xterm($rgb)
 	{
-		$best_match=0;
-
+		$best_match = 0;
 		$colortable = self::maketable();
-
 		$smallest_distance = 10000000000.0;
 
-		for($c=0;$c<=253;$c++)
+		for($c = 0;$c <= 253;$c++)
 		{
-			$d = pow($colortable[$c][0]-$rgb[0],2.0) +
-				pow($colortable[$c][1]-$rgb[1],2.0) +
-				pow($colortable[$c][2]-$rgb[2],2.0);
-			if($d<$smallest_distance)
+			$d = pow($colortable[$c][0]-$rgb[0],2.0) + pow($colortable[$c][1]-$rgb[1],2.0) + pow($colortable[$c][2]-$rgb[2],2.0);
+			if ($d < $smallest_distance)
 			{
 				$smallest_distance = $d;
 				$best_match=$c;
@@ -232,31 +230,19 @@ class SynfileParser
 		return $best_match;
 	}
 
-	public function getDifferenceThreshold()
-	{
-		return $this->difference_threshold;
-	}
-
-	public function setDifferenceThreshold($diff)
-	{
-		$this->difference_threshold = $diff;
-	}
-
-	public function getBoldThreshold()
-	{
-		return $this->bold_threshold;
-	}
-
-	public function setBoldThreshold($bold)
-	{
-		$this->bold_threshold = $bold;
-	}
-
+	/**
+	 * synfile_dir getter
+	 * @return string
+	 */
 	public function getSynfileDir()
 	{
 		return $this->synfile_dir;
 	}
 
+	/**
+	 * synfile_dir setter
+	 * @param string $dir
+	 */
 	public function setSynfileDir($dir)
 	{
 		$this->synfile_dir = $dir;

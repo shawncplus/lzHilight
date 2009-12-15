@@ -50,6 +50,11 @@ class Highlighter
 	 */
 	private $write_style = false;
 
+	/**
+	 * @var string
+	 */
+	private $styles = '';
+
 	/**#@+
 	 * HTML options
 	 */
@@ -94,32 +99,7 @@ class Highlighter
 		$output = '';
 		if ($this->write_style)
 		{
-			$output = '
-			<style type="text/css">
-				pre.code {
-					background-color:' . $this->color_map['H_BG'] . ';
-					color:' . $this->color_map['H_FG'] . ';
-					border:2px solid #555;
-					overflow-x:auto;
-					border-left:none;
-					position:relative;
-					padding-left:2px;
-					margin: 0;
-					float:left;
-					width: 800px;
-				}
-				pre.code b{font-weight:normal;}'
-					. CssHelper::generateCss($this->identifiers['colormap']) . "
-					pre.LN_NUM_WRAP{
-						position:relative;
-						float:left;
-						border: 2px solid #555;
-						border-right:1px solid #fff;
-						background-color:" . $this->color_map['H_NBG'] . ";
-						color:" . $this->color_map['H_NFG'] . ";
-				}
-				pre.code a {color:inherit !important}
-			</style>\n";
+			$output .= $this->getStyle($this->identifiers['colormap'], $this->color_map);
 		}
 
 		// line numbering
@@ -201,5 +181,19 @@ class Highlighter
 		}
 
 		return $output;
+	}
+
+	public function getStyle($identifiers, $colormap)
+	{
+		$output  = '<style type="text/css">';
+		$output .= preg_replace('/\$([A-Z_]+)/e', "\$colormap[\"\\1\"]", $this->style);
+		$output .= CssHelper::generateCss($identifiers);
+		$output .= "</style>\n";
+		return $output;
+	}
+
+	public function setStyle($style)
+	{
+		$this->style = $style;
 	}
 }

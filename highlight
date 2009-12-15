@@ -131,6 +131,12 @@ if ($options['mode'] == 'html')
 }
 
 $highlighter = new Highlighter($options);
+
+if ($options['mode'] == 'html')
+{
+	$highlighter->setStyle(file_get_contents(RESC_DIR . $SYNDIR . 'default.css'));
+}
+
 $output = $highlighter->highlight();
 
 // Non-html line numbering is done here
