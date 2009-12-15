@@ -53,7 +53,7 @@ class Highlighter
 	/**
 	 * @var string
 	 */
-	private $styles = '';
+	private $style = '';
 
 	/**#@+
 	 * HTML options
@@ -73,7 +73,7 @@ class Highlighter
 	{
 		$valid_props = array(
 			'mode', 'token_sets', 'color_map', 'identifiers', 'lines', 'line_wrap_tag', 'line_wrap_cls',
-			'code_wrap_tag', 'code_wrap_cls', 'write_style',
+			'code_wrap_tag', 'code_wrap_cls', 'write_style', 'style'
 		);
 
 		foreach ($options as $key => $value)
