@@ -23,7 +23,7 @@ if (!file_exists(RESC_DIR))
 }
 
 
-$options  = getopt('i:s:lhvt:o:e:');
+$options  = getopt('i:s:lrhvt:o:e:');
 
 if (empty($options) && count($argv) == 2)
 {
@@ -34,8 +34,9 @@ $filename = isset($options['i']) ? $options['i'] : NULL;
 $syntax   = isset($options['s']) ? $options['s'] : NULL;
 $lines    = isset($options['l']);
 $tabstop  = isset($options['t']) ? intval($options['t']) : NULL;
-$html_out = isset($options['o']) ? $options['o'] : FALSE;
+$html_out = isset($options['o']) ? $options['o'] : false;
 $theme    = isset($options['e']) ? $options['e'] : NULL;
+$reduce   = isset($options['r']);
 
 if (isset($options['v']) && count($options['v']) >= 5)
 {
@@ -51,7 +52,8 @@ if (isset($options['h']))
   -l             Show line numbers
   -h             It's what you're looking at!
   -t <#>         Set tab width
-  -o <outfile>   HTML output (experimental)
+  -o <outfile>   HTML output
+  -r             Try to group adjacent tokens in HTML output
 
 HELP;
 die;
@@ -129,6 +131,7 @@ if ($options['mode'] == 'html')
 	$options['write_style'] = true;
 	$options['lines'] = $lines;
 	$options['style'] = file_get_contents(RESC_DIR . $SYNDIR . 'default.css');
+	$options['reduce'] = $reduce;
 }
 
 $highlighter = new Highlighter($options);

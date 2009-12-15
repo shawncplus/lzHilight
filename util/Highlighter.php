@@ -55,6 +55,12 @@ class Highlighter
 	 */
 	private $style = '';
 
+	/**
+	 * Try to produce smaller files by grouping adjacent tags that use the same token
+	 * @var boolean
+	 */
+	private $reduce = false;
+
 	/**#@+
 	 * HTML options
 	 */
@@ -73,7 +79,7 @@ class Highlighter
 	{
 		$valid_props = array(
 			'mode', 'token_sets', 'color_map', 'identifiers', 'lines', 'line_wrap_tag', 'line_wrap_cls',
-			'code_wrap_tag', 'code_wrap_cls', 'write_style', 'style'
+			'code_wrap_tag', 'code_wrap_cls', 'write_style', 'style', 'reduce'
 		);
 
 		foreach ($options as $key => $value)
@@ -178,6 +184,14 @@ class Highlighter
 		if ($this->mode == 'html' && $begin)
 		{
 			$output .= '</pre>';
+			if ($this->reduce)
+			{
+				$regex = '#<b class="([A-Z_]+?)">([^<]+?)\</b>(\s*)<b class="\1">([^<]+?)</b>#';
+				while(preg_match($regex, $output))
+				{
+					$output = preg_replace($regex, '<b class="\1">\2\3\4</b>', $output);
+				}
+			}
 		}
 
 		return $output;
