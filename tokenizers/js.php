@@ -20,7 +20,7 @@ class JsLexer extends DefaultLexer
 	protected static $repeat       = 'do,while,for';
 	protected static $branch       = 'break,continue,switch,return';
 	protected static $statement    = 'try,catch,throw,with,finally';
-	protected static $operators    = 'in,instanceof,let,typeof';
+	protected static $operators    = 'in,instanceof,let,typeof,yield';
 	protected static $labels       = 'case,default';
 	protected static $global_objects = 'array,boolean,date,infinity,javaarray,javaclass,javaobject,javapackage,math,number,nan,object,packages,regexp,string,undefined,java,netscape,sun,var';
 	protected static $exceptions   = 'error,evalerror,rangeerror,referenceerror,syntaxerror,typeerror,urierror';
@@ -38,7 +38,7 @@ class JsLexer extends DefaultLexer
 		JS_END_QUOTE  => array(JS_NORMAL),
 		JS_STRING     => array('[\{\[\(\)\]\}]' => JS_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => JS_OPERATOR, '\W' => JS_NORMAL),
 		JS_BRACE      => array(JS_NORMAL),
-		JS_OPERATOR   => array('\'' => JS_STRLIT_S, '"' => JS_STRLIT_D, '[^\=\|]' => JS_NORMAL),
+		JS_OPERATOR   => array('\'' => JS_STRLIT_S, '"' => JS_STRLIT_D, '[^\+\-\=\|]' => JS_NORMAL),
 		JS_NUMBER     => array('[\{\[\(\)\]\}]' => JS_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => JS_OPERATOR, '[^\d\.]' => JS_NORMAL),
 		JS_COMM_SLASH => array('\*' => JS_COMM_STAR, '\/' => JS_ICOMMENT, "['\"]" => JS_END_QUOTE, JS_NORMAL),
 		JS_ICOMMENT   => array("[\r\n]" => JS_NORMAL),
