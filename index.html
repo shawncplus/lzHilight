@@ -143,8 +143,7 @@
 
 		<pre class="brush: plain">
 T_STRING 1;32
-T_ELSEIF #FF00FF
-		</pre>
+T_ELSEIF #FF00FF</pre>
 
 		<p>The tokens in syntax.syn must match the tokens produced by <span class="icode inline">&lt;syntax&gt;.php</span>. The
 		.syn files can link together by using the #LINK directive ie.,</p>
@@ -152,22 +151,19 @@ T_ELSEIF #FF00FF
 		<pre class="brush: plain">
 T_STRING 1;32
 T_ELSEIF 31
-#LINK html.syn
-		</pre>
+#LINK html.syn</pre>
 
 		<p>The color can also be another token which links multiple tokens together:</p>
 
 		<pre class="brush: plain">
 T_STRING        bgreen   // use human readable color
-T_ENCAPS_STRING T_STRING // link T_ENCAPS_STRING to T_STRING
-		</pre>
+T_ENCAPS_STRING T_STRING // link T_ENCAPS_STRING to T_STRING</pre>
 
 		<p>You can also apply bold/italics to a token using <span class="icode inline">%</span>:</p>
 
 		<pre class="brush: plain">
 COMMENT    #5D8D8F%i          // italic
-OP         #8AC6F2%b          // bold
-		</pre>
+OP         #8AC6F2%b          // bold</pre>
 
 		<p>Background colors are supported but only applied to HTML output:</p>
 
@@ -184,8 +180,7 @@ OP         #8AC6F2%b          // bold
 		<p>Also, you can specify whether or not it should happen only on HTML or
 		console output. When you do this you must specify a fallback color to use.</p>
 
-		<pre class="brush: plain">HTML_STRING      HtmlLexer::handleString|STRING    HTMLONLY
-		</pre>
+		<pre class="brush: plain">HTML_STRING      HtmlLexer::handleString|STRING    HTMLONLY</pre>
 
 		<p>The function must always come first followed by a pipe and a color, which
 		like above, can be another token name.</p>
