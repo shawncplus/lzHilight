@@ -119,7 +119,7 @@ class Highlighter
 				$linewidth = strlen('' . $linecount) + 1;
 				for ($i = 1; $i <= $linecount; $i++)
 				{
-					$lines .= '<span id="' . $i . '">' . str_repeat(' ', $linewidth - strlen('' . $i)) . $i . "</span>\n";
+					$lines .= '<span id="l_' . $i . '">' . str_repeat(' ', $linewidth - strlen('' . $i)) . $i . "</span>\n";
 				}
 				$output .= '<' . $this->line_wrap_tag . ' class="' . $this->line_wrap_cls . '">' . $lines . '</' . $this->line_wrap_tag . '>';
 			}
