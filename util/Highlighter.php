@@ -130,27 +130,24 @@ class Highlighter
 		foreach ($this->token_sets as $tokenset)
 		{
 			$color = isset($this->color_map[$tokenset['token']]) ? $this->color_map[$tokenset['token']] : DEFAULT_COLOR;
-			if (!is_array($color))
-			{
-				$color = array('fg' => $color);
-			}
+			$color = is_array($color) ? $color['fg'] : $color;
 
 			// our token requires a special handler function
-			if (strpos($color['fg'], '::') !== false)
+			if (strpos($color, '::') !== false)
 			{
-				list($class, $method) = explode('::', $color['fg']);
+				list($class, $method) = explode('::', $color);
 				if (!class_exists($class) || !method_exists($class, $method))
 				{
-					$color['fg'] = DEFAULT_COLOR;
+					$color = DEFAULT_COLOR;
 				}
 				else
 				{
 					// Support < 5.3 by creating an instance of the class
 					$inst = new $class;
-					$prev_token = isset($custom_func_prev_token[$color['fg']]) ? $custom_func_prev_token[$color['fg']] : NULL;
+					$prev_token = isset($custom_func_prev_token[$color]) ? $custom_func_prev_token[$color] : NULL;
 					$inner_tokens = $inst->$method($tokenset['string'], $prev_token);
 					unset($inst);
-					$custom_func_prev_token[$color['fg']] = $prev_token;
+					$custom_func_prev_token[$color] = $prev_token;
 
 					$inner_highlighter = new Highlighter(array_merge($this->init_config, array(
 						'token_sets' => $inner_tokens,
@@ -180,8 +177,7 @@ class Highlighter
 			}
 			else
 			{
-				$output .= "\033[48;5;" . (isset($color['bg']) ? $color['bg'] : $this->color_map['H_BG']) . 'm';
-				$output .= "\033[38;5;" . $color['fg'] . 'm' . $tokenset['string'] . "\033[0m";
+				$output .= "\033[38;5;" . $color . 'm' . $tokenset['string'] . "\033[0m";
 			}
 		}
 
