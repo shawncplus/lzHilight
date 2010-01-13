@@ -146,7 +146,7 @@ T_STRING 1;32
 T_ELSEIF #FF00FF
 		</pre>
 
-		<p>The tokens in syntax.syn must match the tokens produced by <span class="icode">&lt;syntax&gt;.php</span>. The
+		<p>The tokens in syntax.syn must match the tokens produced by <span class="icode inline">&lt;syntax&gt;.php</span>. The
 		.syn files can link together by using the #LINK directive ie.,</p>
 
 		<pre class="brush: plain">
@@ -192,7 +192,7 @@ OP         #8AC6F2%b          // bold
 
 		<h3 class="section_header" id="lexers">Tokenizers</h3>
 
-		<p>The <syntax>.php file at minimum must contain the camelized class <syntax>Lexer
+		<p>The &lt;syntax&gt;.php file at minimum must contain the camelized class &lt;syntax&gt;Lexer
 		ie., PhpLexer. This class's tokenize method returns an array of tokenizations of
 		the code passed to the function as a string. The array should follow the
 		format of:</p>
