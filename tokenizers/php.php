@@ -43,14 +43,28 @@ class PhpLexer extends DefaultLexer
 	public static function handleFunc($string)
 	{
 		self::$func_next = true;
-		return array(array('token' => 'PHP_FUNCTION', 'string' => $string));
+		return array(array('token' => 'PHP_KEYWORD', 'string' => $string));
 	}
 
 	public static function handleString($string)
 	{
 		$lstr = trim(strtolower($string));
 
-		if ($lstr === 'true' || $lstr === 'false')
+		if (self::$func_next)
+		{
+			self::$function_table[]= trim($string);
+			self::$func_next = false;
+			return array(array('token' => 'FUNC', 'string' => $string));
+		}
+		elseif (in_array(trim($string), self::$function_table))
+		{
+			return array(array('token' => 'FUNC', 'string' => $string));
+		}
+		elseif (function_exists(trim($string)))
+		{
+			return array(array('token' => 'PHP_BUILTIN', 'string' => $string));
+		}
+		elseif ($lstr === 'true' || $lstr === 'false')
 		{
 			return array(array('token' => 'PHP_BOOLEAN', 'string' => $string));
 		}
