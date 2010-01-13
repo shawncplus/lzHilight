@@ -51,28 +51,204 @@
 			Terminal/HTML Code Highlighting
 		</div>
 
-		<p>Project original started as a syntax highlighter when I was in a terminal and didn't need/want to pop open vim. Somehow morphed into supporting HTML output into now having HTML output as it's main goal.</p><h2>Dependencies</h2>
-		<p>PHP 5.2.x or greater<br />
-			Linux only until PHP 5.3
-		</p>
-		<h2>Install</h2>
-		<p><pre>chmod a+x install.sh
-		sudo ./install.sh</pre></p>
-		<h2>Authors</h2>
-		<p>Shawn Biddle (shawncplus@gmail.com)<br/><br/></p>
-		<h2>Contact</h2>
-		<p>Shawn Biddle (shawncplus@gmail.com)<br/></p>
+		<p>Project original started as a syntax highlighter when I was in a terminal and didn't need/want to pop open vim. Somehow morphed into supporting HTML output into now having HTML output as it's main goal.</p>
 
-		<h2>Download</h2>
+		<h2>Authors</h2>
+			<p>Shawn Biddle (shawncplus@gmail.com)<br/><br/></p>
+		<h2>Contact</h2>
+			<p>Shawn Biddle (shawncplus@gmail.com)<br/></p>
+
 		<p>
-		You can download this project in either
-		<a href="http://github.com/shawncplus/lzHilight/zipball/master">zip</a> or
-		<a href="http://github.com/shawncplus/lzHilight/tarball/master">tar</a> formats.
+			<a id="top" />
 		</p>
-		<p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-		by running:
-  <pre>$ git clone git://github.com/shawncplus/lzHilight</pre>
+		<p>
+			<ul>
+				<li><a href="#getting_started" title="Getting Started">Getting Started</a>
+				<ul><li><a href="#requirements" title="Requirements">Requirements</a></li>
+
+					<li><a href="#wheretoget" title="Where to get it">Where to get it</a></li>
+					<li><a href="#installing" title="Installing">Installing</a></li>
+					<li><a href="#usage" title="Usage">Usage</a></li>
+					<li><a href="#uthemes" title="Themes">Themes</a></li></ul></li>
+				<li><a href="#extending" title="Extending">Extending</a>
+				<ul><li><a href="#synfiles" title="Syntax Files">Syntax Files</a></li>
+
+					<li><a href="#handlers" title="Handler Methods">Handler Methods</a></li>
+					<li><a href="#lexers" title="Tokenizers">Tokenizers</a></li>
+					<li><a href="#themes" title="Themes">Themes</a>
+					<ul><li><a href="#theme_inh" title="Theme Inheritance">Theme Inheritance</a></li></ul></li></ul></li>
+				<li><a href="#moreinfo" title="More Info">Further Info</a></li>
+			</ul>
+
 		</p>
+		<h2 id="getting_started">Getting Started</h2>
+
+		<hr />
+
+		<h3 class="section_header" id="requirements">Requirements</h3>
+
+		<p>
+			<ul>
+				<li>PHP 5.2.x or greater</li>
+				<li>Linux only until PHP 5.3</li>
+			</ul>
+		</p>
+
+		<h3 class="section_header" id="wheretoget">How to get it</h3>
+		<p>You can download this project in either
+			<a href="http://github.com/shawncplus/lzHilight/zipball/master">zip</a> or
+			<a href="http://github.com/shawncplus/lzHilight/tarball/master">tar</a> formats.
+		</p>
+		<p>You can also clone the project with <a href="http://git-scm.com">Git</a> by running:
+			<pre>$ git clone git://github.com/shawncplus/lzHilight</pre>
+		</p>
+
+		<h3 class="section_header" id="installing">Installing</h3>
+		<p>
+			<ol>
+				<li><span class="icode">chmod a+x install.sh</span></li>
+				<li><span class="icode">./install.sh</span>  (sudo if you want to install for all users)</li>
+			</ol>
+		</p>
+
+		<h3 class="section_header" id="usage">Usage</h3>
+		<pre class="brush: plain">man lzhighlight</pre>
+
+		<h3 class="section_header" id="uthemes">Themes</h3>
+
+		<p><strong>Setting the default theme</strong>: To set the default theme just symlink your
+		preferred theme to a folder named <span class="icode">syntax/</span> in the base of the repo:</p>
+
+		<pre class="brush: plain">ln -s themes/wombat/ syntax</pre>
+
+		<p><strong>Override default</strong>: You can use the <span class="icode">-e</span> option to override the default</p>
+
+		<pre class="brush: plain">highlight -i somefile.php -e skittles_dark
+		</pre>
+
+		<h2 id="extending">Extending</h2>
+		<hr />
+
+		<h3 class="section_header" id="synfiles">Syntax Files</h3>
+
+		<p>To add a syntax to the highlighter you need to create two files: syntax.syn
+		and syntax.php. syntax.syn will be a newline separated file containing the
+		tokens and associated color (see man console_codes) OR HTML colors <br />
+		<strong>Example:</strong></p>
+
+		<pre class="brush: plain">T_STRING 1;32
+		T_ELSEIF #FF00FF
+		</pre>
+
+		<p>The tokens in syntax.syn must match the tokens produced by <span class="icode">&lt;syntax&gt;.php</span>. The
+		.syn files can link together by using the #LINK directive ie.,</p>
+
+		<pre class="brush: plain">T_STRING 1;32
+		T_ELSEIF 31
+		#LINK html.syn
+		</pre>
+
+		<p>The color can also be another token which links multiple tokens together:</p>
+
+		<pre class="brush: plain">T_STRING        bgreen   // use human readable color
+		T_ENCAPS_STRING T_STRING // link T_ENCAPS_STRING to T_STRING
+		</pre>
+
+		<p>You can also apply bold/italics to a token using <span class="icode">%</span>:</p>
+
+		<pre class="brush: plain">COMMENT    #5D8D8F%i          // italic
+		OP         #8AC6F2%b          // bold
+		</pre>
+
+		<p>Background colors are supported but only applied to HTML output:</p>
+
+		<pre class="brush: plain">ERROR      #960050%bi #1E0010 // bold, italic and custom bgcolor
+		</pre>
+
+		<h3>Handler Methods</h3>
+
+		<p>Inside the tokenizers you can write methods to handle tokens directly if
+		there is extra processing that needs to take place (making URLs links, etc)
+		To do this, simply put the name of the function as the color:</p>
+
+		<pre class="brush: plain">HTML_STRING      HtmlLexer::handleString
+		</pre>
+
+		<p>Also, you can specify whether or not it should happen only on HTML or
+		console output. When you do this you must specify a fallback color to use.</p>
+
+		<pre class="brush: plain">HTML_STRING      HtmlLexer::handleString|STRING    HTMLONLY
+		</pre>
+
+		<p>The function must always come first followed by a pipe and a color, which
+		like above, can be another token name.</p>
+
+		<h3 class="section_header" id="lexers">Tokenizers</h3>
+
+		<p>The <syntax>.php file at minimum must contain the camelized class <syntax>Lexer
+		ie., PhpLexer. This class's tokenize method returns an array of tokenizations of
+		the code passed to the function as a string. The array should follow the
+		format of:</p>
+
+		<pre class="brush: plain">array(
+			0 =&gt; array(
+				'token' =&gt; 'T_STRING',
+				'string' =&gt; "'this is some string in the code'"
+			),
+			1 =&gt; array(
+				'token' =&gt; 'T_ELSEIF',
+				'string' =&gt; 'elseif'
+			)
+		)
+
+		</pre>
+
+		<p>See the bundled <span class="icode">tokenizers/php.php</span> and <span class="icode">syntax/php.syn</span> for more examples.</p>
+
+		<h3 class="section_header" id="themes">Themes</h3>
+
+		<p>Themes exist in the (duh) <span class="icode">themes/</span> directory. Each theme has a directory under
+		themes/ with the name of the theme, ie., <span class="icode">themes/wombat/</span>. Inside this directory
+		is a <span class="icode">&lt;lang&gt;.syn</span> file for each syntax the theme supports.</p>
+
+		<ul>
+			<li>themes/
+			<ul>
+				<li>wombat/
+					<ul>
+						<li>php.syn</li>
+						<li>default.syn</li>
+						<li>...</li>
+
+					</ul>
+				</li>
+				<li>skittles_dark/
+					<ul>
+						<li>php.syn</li>
+						<li>default.syn</li>
+						<li>...</li>
+					</ul>
+
+				</li>
+			</ul>
+			</li>
+		</ul>
+
+		<h4 id="theme_inh">Theme Inheritance</h4>
+
+		<p>The simplest way to inherit from a theme is to simply create symlinks to another
+		theme and override the default.syn file. However, there may be entries in that
+		theme's <span class="icode">&lt;lang&gt;.syn</span> file that does not fallthrough to the default.syn so be
+		careful.</p>
+
+		<h2 id="moreinfo">Further Info</h2>
+
+		<hr />
+
+		<p>If you can't get it working or you found a bug, etc. then send an email to
+		shawn AT shawnbiddle DOT com with the subject 'Syntax Highlighter'</p>
+
+		<p><a href="#top" title="Back to top">Back to top</a></p>
 
 		<div class="footer">
 			get the source code on GitHub : <a href="http://github.com/shawncplus/lzHilight">shawncplus/lzHilight</a>
