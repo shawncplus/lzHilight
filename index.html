@@ -37,6 +37,7 @@
 			display: block;
 			border: 1px solid #333;
 		}
+		span.inline { display: inline !important; }
 		hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
 		.footer { text-align:center; padding-top:30px; font-style: italic; }
 		ol.numbered { list-style-type: decimal; }
@@ -122,14 +123,13 @@
 		<h3 class="section_header" id="uthemes">Themes</h3>
 
 		<p><strong>Setting the default theme</strong>: To set the default theme just symlink your
-		preferred theme to a folder named <span class="icode">syntax/</span> in the base of the repo:</p>
+		preferred theme to a folder named <span class="icode inline">syntax/</span> in the base of the repo:</p>
 
 		<pre class="brush: plain">ln -s themes/wombat/ syntax</pre>
 
 		<p><strong>Override default</strong>: You can use the <span class="icode">-e</span> option to override the default</p>
 
-		<pre class="brush: plain">highlight -i somefile.php -e skittles_dark
-		</pre>
+		<pre class="brush: plain">highlight -i somefile.php -e skittles_dark</pre>
 
 		<h2 id="extending">Extending</h2>
 		<hr />
@@ -141,34 +141,37 @@
 		tokens and associated color (see man console_codes) OR HTML colors <br />
 		<strong>Example:</strong></p>
 
-		<pre class="brush: plain">T_STRING 1;32
-		T_ELSEIF #FF00FF
+		<pre class="brush: plain">
+T_STRING 1;32
+T_ELSEIF #FF00FF
 		</pre>
 
 		<p>The tokens in syntax.syn must match the tokens produced by <span class="icode">&lt;syntax&gt;.php</span>. The
 		.syn files can link together by using the #LINK directive ie.,</p>
 
-		<pre class="brush: plain">T_STRING 1;32
-		T_ELSEIF 31
-		#LINK html.syn
+		<pre class="brush: plain">
+T_STRING 1;32
+T_ELSEIF 31
+#LINK html.syn
 		</pre>
 
 		<p>The color can also be another token which links multiple tokens together:</p>
 
-		<pre class="brush: plain">T_STRING        bgreen   // use human readable color
-		T_ENCAPS_STRING T_STRING // link T_ENCAPS_STRING to T_STRING
+		<pre class="brush: plain">
+T_STRING        bgreen   // use human readable color
+T_ENCAPS_STRING T_STRING // link T_ENCAPS_STRING to T_STRING
 		</pre>
 
 		<p>You can also apply bold/italics to a token using <span class="icode">%</span>:</p>
 
-		<pre class="brush: plain">COMMENT    #5D8D8F%i          // italic
-		OP         #8AC6F2%b          // bold
+		<pre class="brush: plain">
+COMMENT    #5D8D8F%i          // italic
+OP         #8AC6F2%b          // bold
 		</pre>
 
 		<p>Background colors are supported but only applied to HTML output:</p>
 
-		<pre class="brush: plain">ERROR      #960050%bi #1E0010 // bold, italic and custom bgcolor
-		</pre>
+		<pre class="brush: plain">ERROR      #960050%bi #1E0010 // bold, italic and custom bgcolor</pre>
 
 		<h3>Handler Methods</h3>
 
@@ -176,8 +179,7 @@
 		there is extra processing that needs to take place (making URLs links, etc)
 		To do this, simply put the name of the function as the color:</p>
 
-		<pre class="brush: plain">HTML_STRING      HtmlLexer::handleString
-		</pre>
+		<pre class="brush: plain">HTML_STRING      HtmlLexer::handleString</pre>
 
 		<p>Also, you can specify whether or not it should happen only on HTML or
 		console output. When you do this you must specify a fallback color to use.</p>
@@ -195,18 +197,17 @@
 		the code passed to the function as a string. The array should follow the
 		format of:</p>
 
-		<pre class="brush: plain">array(
-			0 =&gt; array(
-				'token' =&gt; 'T_STRING',
-				'string' =&gt; "'this is some string in the code'"
-			),
-			1 =&gt; array(
-				'token' =&gt; 'T_ELSEIF',
-				'string' =&gt; 'elseif'
-			)
-		)
-
-		</pre>
+		<pre class="brush: plain">
+array(
+	0 =&gt; array(
+		'token' =&gt; 'T_STRING',
+		'string' =&gt; "'this is some string in the code'"
+	),
+	1 =&gt; array(
+		'token' =&gt; 'T_ELSEIF',
+		'string' =&gt; 'elseif'
+	)
+)</pre>
 
 		<p>See the bundled <span class="icode">tokenizers/php.php</span> and <span class="icode">syntax/php.syn</span> for more examples.</p>
 
