@@ -90,8 +90,9 @@ class SynfileParser
 				}
 
 				$color = $html_col ? $color : self::htmlToSgr($color);
-				if ($bg_color !== NULL && preg_match('/^#?[0-9A-F]{3,6}/i', $bg_color) && $html_col)
+				if ($bg_color !== NULL && preg_match('/^#?[0-9A-F]{3,6}/i', $bg_color))
 				{
+					$bg_color = $bg_color !== NULL && $html_col ? $bg_color : self::htmlToSgr($bg_color);
 					$color_map[$token] = array('fg' => $color, 'bg' => $bg_color, 'decorators' => $decorators);
 					continue;
 				}
