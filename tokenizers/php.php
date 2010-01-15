@@ -72,10 +72,6 @@ class PhpLexer extends DefaultLexer
 		{
 			return array(array('token' => 'PHP_TYPE', 'string' => $string));
 		}
-		elseif (function_exists(trim($string)))
-		{
-			return array(array('token' => 'PHP_BUILTIN', 'string' => $string));
-		}
 		else
 		{
 			return array(array('token' => 'PHP_NORMAL', 'string' => $string));

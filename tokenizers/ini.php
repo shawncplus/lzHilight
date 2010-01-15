@@ -17,7 +17,7 @@ class IniLexer extends DefaultLexer
 	protected $starting_state = INI_WHITESPACE;
 
 	protected $state_table = array(
-		INI_WHITESPACE => array(';' => INI_COMMENT, '\w' => INI_KEY, '\[' => INI_BRACE),
+		INI_WHITESPACE => array('[#;]' => INI_COMMENT, '\w' => INI_KEY, '\[' => INI_BRACE),
 		INI_BRACE      => array("[^\n\r]" => INI_SECTION, "[\n\r]" => INI_WHITESPACE),
 		INI_SECTION    => array('\]' => INI_BRACE),
 		INI_COMMENT    => array("[\n\r]" => INI_WHITESPACE),
@@ -33,7 +33,7 @@ class IniLexer extends DefaultLexer
 			"[\n\r]" => INI_WHITESPACE, '\'' => INI_STRING_S, '"' => INI_STRING_D,
 			'\=' => INI_EQUAL, '\d' => INI_VAL_I, "[^ \t]" => INI_VAL_S
 		),
-		INI_VAL_S      => array(';' => INI_COMMENT, "[\n\r]" => INI_WHITESPACE),
+		INI_VAL_S      => array('[#;]' => INI_COMMENT, "[\n\r]" => INI_WHITESPACE),
 		INI_END_QUOTE  => array(INI_WHITESPACE),
 	);
 
