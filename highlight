@@ -10,7 +10,7 @@
  */
 
 
-require_once(dirname(__FILE__) . '/autoload.php');
+require_once('autoload.php');
 
 // Resources directory
 define('RESC_DIR', dirname(__FILE__) . '/');
@@ -79,7 +79,6 @@ else
 	while ($line = fgets(STDIN)) $output[] = $line;
 }
 
-isset($output[0]) or die();
 $line1  = $output[0];
 
 $output = implode('', $output);

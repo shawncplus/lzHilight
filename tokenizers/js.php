@@ -10,8 +10,7 @@
 define('JS_NORMAL',     0); define('JS_STRLIT_S',  1); define('JS_STRLIT_D',  2); define('JS_END_QUOTE',  3);
 define('JS_STRING',     4); define('JS_BRACE',     5); define('JS_OPERATOR',  6); define('JS_NUMBER',     7);
 define('JS_COMM_SLASH', 8); define('JS_COMM_STAR', 9); define('JS_ICOMMENT', 10); define('JS_COMM_END',  11);
-define('JS_BCOMMENT',  12); define('JS_ESCAPE_S', 13); define('JS_ESCAPE_D', 14); define('JS_ESC_INV_D', 15);
-define('JS_ESC_INV_S', 16);
+define('JS_BCOMMENT',  12);
 
 class JsLexer extends DefaultLexer
 {
@@ -34,10 +33,10 @@ class JsLexer extends DefaultLexer
 			'\'' => JS_STRLIT_S, '"' => JS_STRLIT_D, '[a-zA-Z]' => JS_STRING, '[\{\[\(\)\]\}]' => JS_BRACE,
 			'[\-\+\^\>\<\*=\:\|\?\!]' => JS_OPERATOR, '[\d\.]' => JS_NUMBER, '\/' => JS_COMM_SLASH,
 		),
-		JS_STRLIT_S   => array('\\\\' => JS_ESCAPE_S, '\'' => JS_END_QUOTE),
-		JS_STRLIT_D   => array('\\\\' => JS_ESCAPE_D, '"' => JS_END_QUOTE),
+		JS_STRLIT_S   => array('\'' => JS_END_QUOTE),
+		JS_STRLIT_D   => array('"' => JS_END_QUOTE),
 		JS_END_QUOTE  => array(JS_NORMAL),
-		JS_STRING     => array('[\{\[\(\)\]\}]' => JS_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => JS_OPERATOR, '\'' => JS_STRLIT_S, '"' => JS_STRLIT_D,  '\W' => JS_NORMAL),
+		JS_STRING     => array('[\{\[\(\)\]\}]' => JS_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => JS_OPERATOR, '\W' => JS_NORMAL),
 		JS_BRACE      => array(JS_NORMAL),
 		JS_OPERATOR   => array('\'' => JS_STRLIT_S, '"' => JS_STRLIT_D, '[^\=\|]' => JS_NORMAL),
 		JS_NUMBER     => array('[\{\[\(\)\]\}]' => JS_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => JS_OPERATOR, '[^\d\.]' => JS_NORMAL),
@@ -46,16 +45,11 @@ class JsLexer extends DefaultLexer
 		JS_COMM_STAR  => array('\/' => JS_COMM_END,   '.'  => JS_BCOMMENT),
 		JS_BCOMMENT   => array('\*' => JS_COMM_STAR),
 		JS_COMM_END   => array(JS_NORMAL),
-		JS_ESCAPE_S   => array('\'' => JS_STRLIT_S, JS_ESC_INV_S),
-		JS_ESCAPE_D   => array('["nrt]' => JS_STRLIT_D, JS_ESC_INV_D),
-		JS_ESC_INV_D => array(JS_STRLIT_D),
-		JS_ESC_INV_S => array(JS_STRLIT_S),
 	);
 
 	protected $tokens = array(
 		'JS_NRM', 'JS_STR_S', 'JS_STR_D', 'JS_E_Q', 'JS_STRING', 'JS_BRC', 'JS_OP',
 		'JS_NMBR', 'JS_COMM_SLSH', 'JS_COMM_STAR', 'JS_ICOMM', 'JS_COMM_END', 'JS_BCOMM',
-		'JS_ESC', 'JS_ESC', 'JS_ESC_INV',
 	);
 
 	public static function handleString($string)
