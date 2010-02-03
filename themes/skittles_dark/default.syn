@@ -7,7 +7,7 @@ H_FG  #F8F8F2
 H_NBG #000
 H_NFG #FFF
 
-OP          #f90
+OP          #ff5f00
 DELIM       #8F8F8F
 PPROC       #A6E22E
 TYP         #66D9EF

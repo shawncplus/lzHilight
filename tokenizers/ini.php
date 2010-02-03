@@ -28,13 +28,13 @@ class IniLexer extends DefaultLexer
 		),
 		INI_STRING_S   => array('\'' => INI_END_QUOTE),
 		INI_STRING_D   => array('"' => INI_END_QUOTE),
-		INI_VAL_I      => array('\s' => INI_WHITESPACE),
+		INI_VAL_I      => array("[ \t]" => INI_I_WHITESPACE, "[\n\r]" => INI_WHITESPACE),
 		INI_I_WHITESPACE => array(
 			"[\n\r]" => INI_WHITESPACE, '\'' => INI_STRING_S, '"' => INI_STRING_D,
 			'\=' => INI_EQUAL, '\d' => INI_VAL_I, "[^ \t]" => INI_VAL_S
 		),
-		INI_VAL_S      => array('[#;]' => INI_COMMENT, "[\n\r]" => INI_WHITESPACE),
-		INI_END_QUOTE  => array(INI_WHITESPACE),
+		INI_VAL_S      => array('[#;]' => INI_COMMENT, "[ \t]" => INI_I_WHITESPACE, "[\n\r]" => INI_WHITESPACE),
+		INI_END_QUOTE  => array("[ \t]" => INI_I_WHITESPACE, "[\n\r]" => INI_WHITESPACE, INI_ERROR),
 	);
 
 	protected $tokens = array(

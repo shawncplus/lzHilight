@@ -156,7 +156,10 @@ if ($lines || $tabstop !== NULL)
 		// No support for line numbers in html output yet
 		if ($lines-- && !$html_out)
 		{
-			$output[$lineno] = '[37m' . str_pad($lineno + 1, $linewidth, " ", STR_PAD_LEFT) . '[0m| ' . $line_content;
+			$ln_nbr  = "\033[48;5;" . $options['color_map']['H_NBG'] . 'm';
+			$ln_nbr .= "\033[38;5;" . $options['color_map']['H_NFG'] . 'm';
+			$ln_nbr .= str_pad($lineno + 1, $linewidth, " ", STR_PAD_LEFT) . '[0m ';
+			$output[$lineno] = $ln_nbr . $line_content;
 		}
 		if ($tabstop !== NULL)
 		{
