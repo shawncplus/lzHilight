@@ -135,5 +135,3 @@ If you can't get it working or you found a bug, etc. then send an email to
 shawn AT shawnbiddle DOT com with the subject 'Syntax Highlighter'
 
 [Back to top](#top "Back to top")
-
-
