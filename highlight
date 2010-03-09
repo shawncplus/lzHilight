@@ -32,8 +32,8 @@ if (empty($options) && count($argv) == 2)
 
 $filename = isset($options['i']) ? $options['i'] : NULL;
 $syntax   = isset($options['s']) ? $options['s'] : NULL;
-$lines    = !isset($options['l']);
-$tabstop  = isset($options['t']) ? intval($options['t']) : 4;//NULL;
+$lines    = isset($options['l']);
+$tabstop  = isset($options['t']) ? intval($options['t']) : NULL;
 $html_out = isset($options['o']) ? $options['o'] : false;
 $theme    = isset($options['e']) ? $options['e'] : NULL;
 $reduce   = isset($options['r']);
@@ -99,16 +99,6 @@ if ($syntax === NULL)
 $syntax = $syntax === NULL ? @end(explode('.', $filename)) : $syntax;
 
 $SYNDIR = $theme === NULL ? 'syntax/' : ('themes/' . $theme .'/');
-
-if (file_exists($SYNDIR . 'syntax.map'))
-{
-	$syntax_extension_map = json_decode(trim(file_get_contents($SYNDIR . 'syntax.map')), true);
-	if ($syntax_extension_map !== NULL)
-	{
-		$syntax = isset($syntax_extension_map[$syntax]) ? $syntax_extension_map[$syntax] : $syntax;
-	}
-}
-
 
 // No syntax file, just output without highlighting
 if (!file_exists(RESC_DIR . $SYNDIR . $syntax . '.syn'))

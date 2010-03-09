@@ -37,7 +37,7 @@ class HtmlLexer extends DefaultLexer
 		HTML_COMMENT    => array('-' => HTML_COMM_EBD),
 		HTML_COMM_EBD   => array('-' => HTML_COMM_EDD, HTML_COMMENT),
 		HTML_COMM_EDD   => array('\>' => HTML_CONTENT, HTML_ERROR),
-		HTML_TAG_NAME   => array(' ' => HTML_T_WHITESPACE, '\/' => HTML_END_SLASH, '[\?\>]' => HTML_TAG_END, '[^:\-\w]' => HTML_ERROR),
+		HTML_TAG_NAME   => array(' ' => HTML_T_WHITESPACE, '\/' => HTML_END_SLASH, '[\?\>]' => HTML_TAG_END, '[^\-\w]' => HTML_ERROR),
 		HTML_TAG_END    => array(HTML_CONTENT),
 		HTML_T_WHITESPACE => array('\>' => HTML_TAG_END, '\/' => HTML_END_SLASH, '\w' => HTML_ATTRIBUTE, '\'' => HTML_STRING_S, '"' => HTML_STRING_D),
 		HTML_ATTRIBUTE  => array('\=' => HTML_VAL_EQ, '\s' => HTML_T_WHITESPACE, '[\:\-]' => HTML_ATTRIBUTE, '\>' => HTML_TAG_END, '\/' => HTML_END_SLASH, '\W' => HTML_ERROR),
