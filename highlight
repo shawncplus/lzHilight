@@ -102,7 +102,7 @@ $SYNDIR = $theme === NULL ? 'syntax/' : ('themes/' . $theme .'/');
 
 if (file_exists($SYNDIR . 'syntax.map'))
 {
-	$syntax_extension_map = json_decode(trim(file_get_contents($SYNDIR . 'syntax.map')), true);
+	$syntax_extension_map = json_decode(trim(file_get_contents(RESC_DIR . $SYNDIR . 'syntax.map')), true);
 	if ($syntax_extension_map !== NULL)
 	{
 		$syntax = isset($syntax_extension_map[$syntax]) ? $syntax_extension_map[$syntax] : $syntax;

@@ -39,7 +39,7 @@ class JsLexer extends DefaultLexer
 		JS_END_QUOTE  => array(JS_NORMAL),
 		JS_STRING     => array('[\{\[\(\)\]\}]' => JS_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => JS_OPERATOR, '\'' => JS_STRLIT_S, '"' => JS_STRLIT_D,  '\W' => JS_NORMAL),
 		JS_BRACE      => array(JS_NORMAL),
-		JS_OPERATOR   => array('\'' => JS_STRLIT_S, '"' => JS_STRLIT_D, '[^\=\|]' => JS_NORMAL),
+		JS_OPERATOR   => array('\'' => JS_STRLIT_S, '"' => JS_STRLIT_D, '[\d\.]' => JS_NUMBER, '[^\=\|]' => JS_NORMAL),
 		JS_NUMBER     => array('[\{\[\(\)\]\}]' => JS_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => JS_OPERATOR, '[^\d\.]' => JS_NORMAL),
 		JS_COMM_SLASH => array('\*' => JS_COMM_STAR, '\/' => JS_ICOMMENT, "['\"]" => JS_END_QUOTE, JS_NORMAL),
 		JS_ICOMMENT   => array("[\r\n]" => JS_NORMAL),
