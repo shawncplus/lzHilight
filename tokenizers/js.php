@@ -47,7 +47,7 @@ class JsLexer extends DefaultLexer
 		JS_BCOMMENT   => array('\*' => JS_COMM_STAR),
 		JS_COMM_END   => array(JS_NORMAL),
 		JS_ESCAPE_S   => array('\'' => JS_STRLIT_S, JS_ESC_INV_S),
-		JS_ESCAPE_D   => array('["nrt\\]' => JS_STRLIT_D, JS_ESC_INV_D),
+		JS_ESCAPE_D   => array('["nrt\\\]' => JS_STRLIT_D, JS_ESC_INV_D),
 		JS_ESC_INV_D => array(JS_STRLIT_D),
 		JS_ESC_INV_S => array(JS_STRLIT_S),
 	);
