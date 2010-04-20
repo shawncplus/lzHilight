@@ -100,7 +100,7 @@ $syntax = $syntax === NULL ? @end(explode('.', $filename)) : $syntax;
 
 $SYNDIR = $theme === NULL ? 'syntax/' : ('themes/' . $theme .'/');
 
-if (file_exists($SYNDIR . 'syntax.map'))
+if (file_exists(RESC_DIR . $SYNDIR . 'syntax.map'))
 {
 	$syntax_extension_map = json_decode(trim(file_get_contents(RESC_DIR . $SYNDIR . 'syntax.map')), true);
 	if ($syntax_extension_map !== NULL)
