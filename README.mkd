@@ -1,5 +1,6 @@
 <a id="top" />
 
+* [Features Out of the Box](#outofthebox "Features Out of the Box")
 * [Getting Started](#getting_started "Getting Started")
   * [Requirements](#requirements "Requirements")
   * [Installing](#installing "Installing")
@@ -12,6 +13,34 @@
   * [Themes](#themes "Themes")
      * [Theme Inheritance](#theme_inh "Theme Inheritance")
 * [Further Info](#moreinfo "More Info")
+
+
+## Features Out of the Box
+
+* * *
+
+*   Console and HTML highlighting output
+*   Supported Languages:
+    *   PHP
+    *   XML
+    *   HTML 4/5
+    *   Javascript
+    *   C++
+    *   C (beta)
+    *   CSS
+    *   INI files
+*   Line numbering
+*   Bundled Themes:
+    *   Skittles Dark: [Based on Vim Theme][1]
+    *   Wombat: [Based on Vim Theme][2]
+    *   Native: [Based on Vim Theme][3]
+    *   Github theme</a> </ul></p>
+
+ [1]: http://www.vim.org/scripts/script.php?script_id=2595
+ [2]: http://www.vim.org/scripts/script.php?script_id=1778
+ [3]: http://www.vim.org/scripts/script.php?script_id=1857
+
+
 
 <h2 id="getting_started">Getting Started</h2>
 
