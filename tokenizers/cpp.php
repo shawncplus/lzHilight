@@ -15,8 +15,9 @@ define('CPP_ESC_INV_S', 16); define('CPP_PREPROC',  17); define('CPP_PREPROC_CON
 
 class CppLexer extends ClikeLexer
 {
-	protected static $keywords     = 'void,function,throw,with,using,namespace';
-	protected static $global_objects = 'integer,int,bool,boolean,long,char';
+	protected static $keywords     = 'function,throw,with,using,namespace';
+	protected static $global_objects = 'void,integer,int,bool,boolean,long,char,class,enum,struct';
+	protected static $operators    = 'public,private,protected,friend,typedef,const';
 	protected $starting_state = CPP_NORMAL;
 
 	protected $tokens = array(
@@ -36,7 +37,7 @@ class CppLexer extends ClikeLexer
 		CPP_END_QUOTE  => array(CPP_NORMAL),
 		CPP_STRING     => array('[\{\[\(\)\]\}]' => CPP_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => CPP_OPERATOR, '\'' => CPP_STRLIT_S, '"' => CPP_STRLIT_D,  '\W' => CPP_NORMAL),
 		CPP_BRACE      => array(CPP_NORMAL),
-		CPP_OPERATOR   => array('\'' => CPP_STRLIT_S, '"' => CPP_STRLIT_D, '[\d\.]' => CPP_NUMBER, '[^\=\|]' => CPP_NORMAL),
+		CPP_OPERATOR   => array('\'' => CPP_STRLIT_S, '"' => CPP_STRLIT_D, '[\d\.]' => CPP_NUMBER, '[^\=\|:\<\>\-\+]' => CPP_NORMAL),
 		CPP_NUMBER     => array('[\{\[\(\)\]\}]' => CPP_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => CPP_OPERATOR, '[^\d\.]' => CPP_NORMAL),
 		CPP_COMM_SLASH => array('\*' => CPP_COMM_STAR, '\/' => CPP_ICOMMENT, "['\"]" => CPP_END_QUOTE, CPP_NORMAL),
 		CPP_ICOMMENT   => array("[\r\n]" => CPP_NORMAL),
