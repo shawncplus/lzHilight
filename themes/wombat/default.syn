@@ -10,7 +10,7 @@ DELIM       #e7f6da
 PPROC       #e5786d
 TYP         #CAE682
 NORM        H_FG
-CONST       PREPROC
+CONST       PPROC
 STR         #777 #000
 COMM        #99968B
 ERR         #960050 #1E0010

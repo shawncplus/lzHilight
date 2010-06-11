@@ -32,7 +32,7 @@ if (empty($options) && count($argv) == 2)
 
 $filename = isset($options['i']) ? $options['i'] : NULL;
 $syntax   = isset($options['s']) ? $options['s'] : NULL;
-$lines    = !isset($options['l']);
+$lines    = isset($options['l']);
 $tabstop  = isset($options['t']) ? intval($options['t']) : 4;//NULL;
 $html_out = isset($options['o']) ? $options['o'] : false;
 $theme    = isset($options['e']) ? $options['e'] : NULL;

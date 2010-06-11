@@ -158,7 +158,7 @@ T_USE           PHP_KEYWORD
 // custom tokens
 T_VAR_TOKEN     PHP_OPERATOR
 T_VAR_NAME      PHP_IDENTIFIER
-PHP_BUILTIN     PPROC
+PHP_BUILTIN     PHP_PREPROC
 PHP_BOOLEAN     PHP_CONSTANT
 
 // grab the tokens/colors from the HTML tokenizer
