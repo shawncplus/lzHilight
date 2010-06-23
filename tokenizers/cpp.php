@@ -30,7 +30,7 @@ class CppLexer extends ClikeLexer
 		CPP_NORMAL     => array(
 			'\'' => CPP_STRLIT_S, '"' => CPP_STRLIT_D, '[a-zA-Z]' => CPP_STRING, '[\{\[\(\)\]\}]' => CPP_BRACE,
 			'[\-\+\^\>\<\*=\:\|\?\!]' => CPP_OPERATOR, '[\d\.]' => CPP_NUMBER, '\/' => CPP_COMM_SLASH,
-			"[\r\n]" => CPP_NEWLINE,
+			'#' => CPP_PREPROC, "[\r\n]" => CPP_NEWLINE,
 		),
 		CPP_STRLIT_S   => array('\\\\' => CPP_ESCAPE_S, '\'' => CPP_END_QUOTE),
 		CPP_STRLIT_D   => array('\\\\' => CPP_ESCAPE_D, '"' => CPP_END_QUOTE),
