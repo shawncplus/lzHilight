@@ -1,6 +1,8 @@
 {
 	"xlf" : "xml",
+	"xsd" : "xml",
 	"conf" : "ini",
 	"gitconfig" : "ini",
-	"h" : "cpp"
+	"h" : "cpp",
+	"hpp" : "cpp"
 }

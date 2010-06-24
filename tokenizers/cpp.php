@@ -29,7 +29,7 @@ class CppLexer extends ClikeLexer
 	protected $state_table = array(
 		CPP_NORMAL     => array(
 			'\'' => CPP_STRLIT_S, '"' => CPP_STRLIT_D, '[a-zA-Z]' => CPP_STRING, '[\{\[\(\)\]\}]' => CPP_BRACE,
-			'[\-\+\^\>\<\*=\:\|\?\!]' => CPP_OPERATOR, '[\d\.]' => CPP_NUMBER, '\/' => CPP_COMM_SLASH,
+			'[\-\+\^\>\<\*=\:\|\?\!%]' => CPP_OPERATOR, '[\d\.]' => CPP_NUMBER, '\/' => CPP_COMM_SLASH,
 			'#' => CPP_PREPROC, "[\r\n]" => CPP_NEWLINE,
 		),
 		CPP_STRLIT_S   => array('\\\\' => CPP_ESCAPE_S, '\'' => CPP_END_QUOTE),
