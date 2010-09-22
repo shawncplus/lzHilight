@@ -35,7 +35,7 @@ class VimLexer extends DefaultLexer
 			'[&\-\+\^\>\<\*=\:\|\?\!\.]' => VIM_OPERATOR, '[\d\.]' => VIM_NUMBER,
 		),
 		VIM_STRLIT_S   => array('\\\\' => VIM_ESCAPE_S, '\'' => VIM_END_QUOTE, "[\r\n]" => VIM_NORMAL),
-		VIM_STRLIT_D   => array('\\\\' => VIM_ESCAPE_D, '"' => VIM_END_QUOTE,),
+		VIM_STRLIT_D   => array('"' => VIM_END_QUOTE,),
 		VIM_END_QUOTE  => array(VIM_NORMAL),
 		VIM_STRING     => array(
 			'[\-\+\^\>\<\*=\:\|\?\!]' => VIM_OPERATOR, '\'' => VIM_STRLIT_S, '"' => VIM_STRLIT_D,  '\W' => VIM_NORMAL
