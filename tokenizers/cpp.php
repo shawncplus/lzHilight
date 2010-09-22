@@ -16,7 +16,7 @@ define('CPP_ESC_INV_S', 16); define('CPP_PREPROC',  17); define('CPP_PREPROC_CON
 class CppLexer extends ClikeLexer
 {
 	protected static $keywords     = 'function,throw,with,using,namespace';
-	protected static $global_objects = 'void,integer,int,bool,boolean,long,char,class,enum,struct,inline,static';
+	protected static $global_objects = 'void,integer,int,bool,boolean,long,char,class,enum,struct,inline,static,unsigned';
 	protected static $operators    = 'public,private,protected,friend,typedef,const';
 	protected $starting_state = CPP_NORMAL;
 
