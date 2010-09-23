@@ -79,12 +79,13 @@ class VimLexer extends DefaultLexer
 			}
 
 			/* HACK for comments since they and strings can start with " */
-			if (preg_match("/^[\r\n]$/", $char) && $state === VIM_STRLIT_D)
+			if ((!isset($output[$i]) || preg_match("/^[\r\n]$/", $char)) && $state === VIM_STRLIT_D)
 			{
+				$cur_state_string .= $char;
 				$starting_state = $this->tokens[VIM_NORMAL];
 				$state = VIM_NORMAL;
 				$ret_tokens[] = array('token' => $this->tokens[VIM_COMM], 'string' => $cur_state_string);
-				$cur_state_string = $char;
+				$cur_state_string = '';
 				continue;
 			}
 
