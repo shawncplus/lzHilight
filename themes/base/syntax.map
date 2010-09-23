@@ -4,5 +4,7 @@
 	"conf" : "ini",
 	"gitconfig" : "ini",
 	"h" : "cpp",
-	"hpp" : "cpp"
+	"hpp" : "cpp",
+	"vimrc" : "vim",
+	"gvimrc" : "vim"
 }
