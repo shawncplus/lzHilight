@@ -142,7 +142,6 @@ class VimLexer extends DefaultLexer
 				}
 			}
 		}
-		unset($words);
 
 		return array(array('token' => $token, 'string' => $string));
 	}
