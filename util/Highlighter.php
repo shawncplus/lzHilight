@@ -127,6 +127,7 @@ class Highlighter
 		}
 
 		$custom_func_prev_token = array();
+		$custom_func_cache = array();
 		foreach ($this->token_sets as $tokenset)
 		{
 			$color = isset($this->color_map[$tokenset['token']]) ? $this->color_map[$tokenset['token']] : DEFAULT_COLOR;
@@ -145,19 +146,28 @@ class Highlighter
 				}
 				else
 				{
-					// Support < 5.3 by creating an instance of the class
-					$inst = new $class;
 					$prev_token = isset($custom_func_prev_token[$color['fg']]) ? $custom_func_prev_token[$color['fg']] : NULL;
-					$inner_tokens = $inst->$method($tokenset['string'], $prev_token);
-					unset($inst);
+					$func_cache_key = md5($class.$method.$tokenset['string']);
+					if (!isset($custom_func_cache[$func_cache_key]))
+					{
+						$inst = new $class;
+						$custom_func_cache[$func_cache_key] =  $inst->$method($tokenset['string'], $prev_token);
+						unset($inst);
+					}
+					$inner_tokens = $custom_func_cache[$func_cache_key];
 					$custom_func_prev_token[$color['fg']] = $prev_token;
 
-					$inner_highlighter = new Highlighter(array_merge($this->init_config, array(
-						'token_sets' => $inner_tokens,
-						'write_style' => false
-					)));
-					$output .= $inner_highlighter->highlight(false);
-					unset($inner_highlighter);
+					$old_write_style = $this->write_style;
+					$old_tokens = $this->token_sets;
+
+						$this->token_sets = $inner_tokens;
+						$this->write_style = false;
+
+						$output .= $this->highlight(false);
+
+					$this->token_sets = $old_tokens;
+					$this->write_style = $old_write_style;
+					unset($old_tokens, $old_write_style);
 					continue;
 				}
 			}
