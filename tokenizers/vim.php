@@ -121,11 +121,23 @@ class VimLexer extends DefaultLexer
 
 	public static function handleParam($string, $prev)
 	{
-		$tstr = strtolower(trim($string));
 		$tests = array(
 			'options'   => 'VIM_OPT', 'autokeywords'  => 'VIM_AUTOS', 'functions' => 'VIM_FUNC',
 		);
 
+		return self::_handleKeyword($tests, $string);
+	}
+
+
+	public static function handleCommand($string, $prev)
+	{
+		return self::_handleKeyword(array('commands' => 'VIM_CMD'), $string);
+	}
+
+
+	private static function _handleKeyword($tests, $string)
+	{
+		$tstr = strtolower(trim($string));
 		$token = 'NORM';
 		foreach ($tests as $var => $token_name)
 		{
@@ -139,30 +151,8 @@ class VimLexer extends DefaultLexer
 				if (preg_match('/^' . $word . ($word[strlen($word)-1] == ')' ? '?' : '') . '$/', $string))
 				{
 					$token = $token_name;
+					break;
 				}
-			}
-		}
-
-		return array(array('token' => $token, 'string' => $string));
-	}
-
-
-	public static function handleCommand($string, $prev)
-	{
-		$tstr = strtolower(trim($string));
-		$token = 'NORM';
-
-		if (!isset(self::$words['commands']))
-		{
-			self::$words['commands'] = preg_split('/\s+/', self::$commands);
-		}
-
-		foreach (self::$words['commands'] as $word)
-		{
-			if (preg_match('/^' . $word . ($word[strlen($word)-1] == ')' ? '?' : '') . '$/', $string))
-			{
-				$token = 'VIM_CMD';
-				break;
 			}
 		}
 
