@@ -36,7 +36,7 @@ class VimLexer extends DefaultLexer
 	protected $state_table = array(
 		VIM_NORMAL     => array(
 			'[a-zA-Z]' => VIM_COMMAND, '"' => VIM_COMM,
-			self::OPERATORS => VIM_OPERATOR, '[\d\.]' => VIM_NUMBER,
+			self::OPERATORS => VIM_OPERATOR, '\d' => VIM_NUMBER,
 		),
 		VIM_STRLIT_S   => array('\\\\' => VIM_ESCAPE_S, '\'' => VIM_END_QUOTE, "[\r\n]" => VIM_NORMAL),
 		VIM_STRLIT_D   => array('"' => VIM_END_QUOTE,),
@@ -55,11 +55,11 @@ class VimLexer extends DefaultLexer
 			'[,\(\)]' => VIM_PAREN, 
 		),
 		VIM_OPERATOR   => array(
-			'\'' => VIM_STRLIT_S, '"' => VIM_STRLIT_D, '[\d\.]' => VIM_NUMBER, '[ \t]' => VIM_IWHITE,
+			'\'' => VIM_STRLIT_S, '"' => VIM_STRLIT_D, '\d' => VIM_NUMBER, '[ \t]' => VIM_IWHITE,
 			'[,\(\)]' => VIM_PAREN, "[\r\n]" => VIM_NORMAL, '\w' => VIM_PARAM
 		),
 		VIM_PAREN   => array(
-			'\'' => VIM_STRLIT_S, '"' => VIM_STRLIT_D, '[\d\.]' => VIM_NUMBER, self::OPERATORS => VIM_OPERATOR,
+			'\'' => VIM_STRLIT_S, '"' => VIM_STRLIT_D, '\d' => VIM_NUMBER, self::OPERATORS => VIM_OPERATOR,
 			'[ \t]' => VIM_IWHITE, "[\r\n]" => VIM_NORMAL, VIM_PARAM,
 		),
 		VIM_NUMBER     => array(
