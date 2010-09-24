@@ -119,33 +119,6 @@ class VimLexer extends DefaultLexer
 		return $ret_tokens;
 	}
 
-	public static function handleString($string, $prev)
-	{
-		$tstr = strtolower(trim($string));
-		$tests = array(
-			'options'   => 'VIM_OPT', 'autokeywords'  => 'VIM_AUTOS', 'commands' => 'VIM_KEY', 'functions' => 'VIM_FUNC',
-		);
-
-		$token = 'NORM';
-		foreach ($tests as $var => $token_name)
-		{
-			if (!isset(self::$words[$var]))
-			{
-				self::$words[$var] = preg_split('/\s+/', self::$$var);
-			}
-
-			foreach (self::$words[$var] as $word)
-			{
-				if (preg_match('/^' . $word . ($word[strlen($word)-1] == ')' ? '?' : '') . '$/', $string))
-				{
-					$token = $token_name;
-				}
-			}
-		}
-
-		return array(array('token' => $token, 'string' => $string));
-	}
-
 	public static function handleParam($string, $prev)
 	{
 		$tstr = strtolower(trim($string));
