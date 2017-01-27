@@ -26,7 +26,7 @@ class CssLexer extends DefaultLexer
 
     protected $tokens = [
         'CSS_WHTSPC', 'CSS_IDEN', 'CSS_CLS', 'CSS_ID', 'CSS_PCLS', 'CSS_PROP', 'CSS_MEASURE', 'CSS_STR_S', 'CSS_STR_D', 'CSS_COMM', 'CSS_COMM_STAR',
-        'CSS_OPEN_BRC', 'CSS_END_BRC', 'CSS_BLCK', 'CSS_ERR', 'CSS_OP', 'CSS_BLCK_COMM', 'CSS_BLCK_COM_STR', 'CSS_COMM_END', 'CSS_B_COMM_END',
+        'CSS_OPEN_BRC', 'CSS_END_BRC', 'CSS_BLCK', 'CSS_ERR', 'CSS_OP', 'CSS_BLCK_COMM', 'CSS_BLCK_COM_STR', 'CSS_COMM_END', 'CSS_B_COMM_END', 'CSS_MIXIN',
     ];
 
     protected $state_table = [

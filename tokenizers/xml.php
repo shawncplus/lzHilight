@@ -41,7 +41,7 @@ class XmlLexer extends DefaultLexer
         XML_COMM_SDD => ['\>' => XML_CONTENT, '-' => XML_ERROR, XML_COMMENT],
         XML_COMMENT => ['-' => XML_COMM_EBD],
         XML_COMM_EBD => ['-' => XML_COMM_EDD, XML_COMMENT],
-        XML_COMM_EDD => ['\>' => XML_CONTENT, XML_ERROR],
+        XML_COMM_EDD => ['\>' => XML_CONTENT, XML_COMMENT],
         XML_TAG_NAME => ['\s' => XML_T_WHITESPACE, '\/' => XML_END_SLASH, '[\?\>]' => XML_TAG_END, '[^:\-\w]' => XML_ERROR],
         XML_TAG_END => [XML_CONTENT],
         XML_T_WHITESPACE => ['\>' => XML_TAG_END, '\/' => XML_END_SLASH, '\w' => XML_ATTRIBUTE, '\'' => XML_STRING_S, '"' => XML_STRING_D],

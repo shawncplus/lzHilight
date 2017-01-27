@@ -4,8 +4,6 @@
  * @copyright (c) Copyright 2007-2016 Virtuvia, LLC. All rights reserved.
  */
 
-require_once dirname(__FILE__) . '/../autoload.php';
-
 /**
  * Workhorse of the highlighter.
  *
