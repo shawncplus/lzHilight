@@ -23,7 +23,7 @@ if (!file_exists(RESC_DIR))
 }
 
 
-$options  = getopt('i:s:lrhvt:o:e:');
+$options  = getopt('i:s:lrhvt:o:e:w:k');
 
 if (empty($options) && count($argv) == 2)
 {
@@ -36,7 +36,9 @@ $lines    = isset($options['l']);
 $tabstop  = isset($options['t']) ? intval($options['t']) : 4;//NULL;
 $html_out = isset($options['o']) ? $options['o'] : false;
 $theme    = isset($options['e']) ? $options['e'] : NULL;
+$termwidth = isset($options['w']) ? $options['w'] : intval(`tput cols`);
 $reduce   = isset($options['r']);
+$showTokens  = isset($options['k']);
 
 if (isset($options['v']) && count($options['v']) >= 5)
 {
@@ -54,6 +56,7 @@ if (isset($options['h']))
   -t <#>         Set tab width
   -o <outfile>   HTML output
   -r             Try to group adjacent tokens in HTML output
+  -w <#>         Max width
 
 HELP;
 die;
@@ -136,6 +139,11 @@ $options = array(
 	'mode' => $html_out ? 'html' : 'cli',
 );
 
+if ($showTokens) {
+    echo json_encode($options['token_sets']);
+    exit;
+}
+
 if ($options['mode'] == 'html')
 {
 	$options['identifiers'] = CssHelper::getTokensetSelectors($color_map);
@@ -159,24 +167,34 @@ $output = $highlighter->highlight();
 // Non-html line numbering is done here
 if ($lines || $tabstop !== NULL)
 {
+    $nbg = "\033[48;5;" . $options['color_map']['H_NBG'] . 'm';
+    $nfg = "\033[38;5;" . $options['color_map']['H_NFG'] . 'm';
+    $bg = "\033[48;5;" . $options['color_map']['H_BG'] . 'm';
+    $fg = "\033[38;5;" . $options['color_map']['H_FG'] . 'm';
 	$output = explode("\n", trim($output));
-	$linewidth = strlen((string)(count($output) + 1));
+	$gutterwidth = strlen((string)(count($output) + 1));
 	foreach ($output as $lineno => $line_content)
 	{
 		// No support for line numbers in html output yet
 		if ($lines-- && !$html_out)
 		{
-			$ln_nbr  = "\033[48;5;" . $options['color_map']['H_NBG'] . 'm';
-			$ln_nbr .= "\033[38;5;" . $options['color_map']['H_NFG'] . 'm';
-			$ln_nbr .= str_pad($lineno + 1, $linewidth, " ", STR_PAD_LEFT) . '[0m ';
-			$output[$lineno] = $ln_nbr . $line_content;
-		}
+			$ln_nbr = $nbg . $nfg . str_pad($lineno + 1, $gutterwidth, " ", STR_PAD_LEFT) . " \033[0m";
+			$output[$lineno] = $ln_nbr . $bg . $fg . $line_content;
+        }
+        else
+        {
+			$output[$lineno] = $bg . $line_content;
+        }
+
 		if ($tabstop !== NULL)
 		{
 			$output[$lineno] = str_replace("\t", str_repeat(' ', $tabstop), $output[$lineno]);
 		}
+
+        $linewidth = strlen(preg_replace("/\033\[([34]8;5;\d+?|\d+?)m/", '', $output[$lineno]));
+        $output[$lineno] .= $bg . str_repeat(' ', max(0, $termwidth - $linewidth));
 	}
-	$output = implode("\n", $output);
+	$output = implode("\n", $output) . "\n";
 }
 
 if ($options['mode'] == 'html')

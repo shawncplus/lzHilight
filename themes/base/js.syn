@@ -9,7 +9,7 @@ JS_STR_D   JS_STR_S
 JS_E_Q     JS_STR_S
 JS_STRING  JsLexer::handleString
 JS_BRC     DELIM
-JS_OP      OP
+JS_OP      JsLexer::handleOperator
 JS_KEY     KEY
 JS_EXCEP   #A6E22E
 JS_LBL     #E6DB74
@@ -20,6 +20,7 @@ JS_BRNCH   JS_COND
 JS_RPT     KEY
 JS_STMT    KEY
 JS_NMBR    CONST
+JS_ARROW   JS_BRC
 
 JS_ICOMM      COMM
 JS_BCOMM      DOCBLOCK

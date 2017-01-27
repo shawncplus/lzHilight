@@ -160,10 +160,10 @@ class Highlighter
 					$old_write_style = $this->write_style;
 					$old_tokens = $this->token_sets;
 
-						$this->token_sets = $inner_tokens;
-						$this->write_style = false;
+                    $this->token_sets = $inner_tokens;
+                    $this->write_style = false;
 
-						$output .= $this->highlight(false);
+                    $output .= $this->highlight(false);
 
 					$this->token_sets = $old_tokens;
 					$this->write_style = $old_write_style;

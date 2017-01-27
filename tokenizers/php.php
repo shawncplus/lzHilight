@@ -11,6 +11,13 @@ class PhpLexer extends DefaultLexer
 	private static $func_next = false;
 	private static $function_table = array();
 
+    protected static $magic_methods = [
+        "__construct", "__destruct", "__call", "__callStatic", "__get",
+        "__set", "__isset", "__unset", "__sleep", "__wakeup", "__toString",
+        "__invoke", "__set_state", "__clone", "__debugInfo",
+    ];
+
+
 	public function tokenize($output, &$starting_state = NULL)
 	{
 		$ret_tokens = array();
@@ -60,7 +67,7 @@ class PhpLexer extends DefaultLexer
 		{
 			return array(array('token' => 'FUNC', 'string' => $string));
 		}
-		elseif (function_exists(trim($string)))
+		elseif (function_exists(trim($string)) || in_array(trim($string), self::$magic_methods))
 		{
 			return array(array('token' => 'PHP_BUILTIN', 'string' => $string));
 		}
@@ -94,7 +101,7 @@ class PhpLexer extends DefaultLexer
 			$string = '<a href="#' . trim($string) .'">' . $string . '</a>';
 			return array(array('token' => 'FUNC', 'string' => $string, 'noentities' => 1));
 		}
-		elseif (function_exists(trim($string)))
+		elseif (function_exists(trim($string)) || in_array(trim($string), self::$magic_methods))
 		{
 			$string = '<a href="http://php.net/' . trim($string) . '">' . $string . '</a>';
 			return array(array('token' => 'PHP_BUILTIN', 'string' => $string, 'noentities' => 1));
@@ -116,7 +123,7 @@ class PhpLexer extends DefaultLexer
 		foreach (explode("\n", $string) as $docpart)
 		{
 			$doctag = array();
-			if (preg_match('#(^\s*\*\s+)(@[a-z]+)(:?\s*.+)$#i', $docpart, $doctag))
+			if (preg_match('#(^\s*\*\s+)(@[\S]+)($|(:?\s*.+))$#i', $docpart, $doctag))
 			{
 				$doctoks[] = array('token' => 'PHP_DOCBLOCK', 'string' => $doctag[1]);
 				$doctoks[] = array('token' => 'PHP_DOCTAG',    'string' => $doctag[2]);

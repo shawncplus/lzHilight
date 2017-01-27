@@ -3,8 +3,11 @@
 	"xsd" : "xml",
 	"conf" : "ini",
 	"gitconfig" : "ini",
+	"c" : "cpp",
 	"h" : "cpp",
 	"hpp" : "cpp",
 	"vimrc" : "vim",
-	"gvimrc" : "vim"
+	"gvimrc" : "vim",
+    "yml": "yaml",
+    "json": "js"
 }

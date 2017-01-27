@@ -13,7 +13,7 @@ class JsLexer extends ClikeLexer
 	protected static $labels       = 'case,default';
 	protected static $global_objects = 'array,boolean,date,infinity,javaarray,javaclass,javaobject,javapackage,math,number,nan,object,packages,regexp,string,undefined,java,netscape,sun,var';
 	protected static $exceptions   = 'error,evalerror,rangeerror,referenceerror,syntaxerror,typeerror,urierror';
-	protected static $mem_ops      = 'new,delete';
+	protected static $mem_ops      = 'new,delete,class,extends';
 
 	protected $starting_state = CLIKE_NORMAL;
 
@@ -44,4 +44,17 @@ class JsLexer extends ClikeLexer
 
 		return array(array('token' => $token, 'string' => $string));
 	}
+
+    public static function handleOperator($string)
+    {
+        if ($string === '=>') {
+            return array(array('token' => 'JS_ARROW', 'string' => $string));
+        }
+
+        if ($string === '.') {
+            return array(array('token' => 'JS_BRC', 'string' => $string));
+        }
+
+        return array(array('token' => 'OP', 'string' => $string));
+    }
 }

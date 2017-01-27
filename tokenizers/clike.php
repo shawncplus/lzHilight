@@ -37,9 +37,12 @@ class ClikeLexer extends DefaultLexer
 		CLIKE_STRLIT_S   => array('\\\\' => CLIKE_ESCAPE_S, '\'' => CLIKE_END_QUOTE),
 		CLIKE_STRLIT_D   => array('\\\\' => CLIKE_ESCAPE_D, '"' => CLIKE_END_QUOTE),
 		CLIKE_END_QUOTE  => array(CLIKE_NORMAL),
-		CLIKE_STRING     => array('[\{\[\(\)\]\}]' => CLIKE_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => CLIKE_OPERATOR, '\'' => CLIKE_STRLIT_S, '"' => CLIKE_STRLIT_D,  '\W' => CLIKE_NORMAL),
+		CLIKE_STRING     => array('[\{\[\(\)\]\}]' => CLIKE_BRACE, '[\.\-\+\^\>\<\*=\:\|\?\!]' => CLIKE_OPERATOR, '\'' => CLIKE_STRLIT_S, '"' => CLIKE_STRLIT_D,  '\W' => CLIKE_NORMAL),
 		CLIKE_BRACE      => array(CLIKE_NORMAL),
-		CLIKE_OPERATOR   => array('\'' => CLIKE_STRLIT_S, '"' => CLIKE_STRLIT_D, '[\d\.]' => CLIKE_NUMBER, '[^\=\|]' => CLIKE_NORMAL),
+        CLIKE_OPERATOR   => array(
+            '[\{\[\(\)\]\}]' => CLIKE_BRACE, '\'' => CLIKE_STRLIT_S, '"' => CLIKE_STRLIT_D,
+            '[\d\.]' => CLIKE_NUMBER, '[^\-\+\>\=\|]' => CLIKE_NORMAL
+        ),
 		CLIKE_NUMBER     => array('[\{\[\(\)\]\}]' => CLIKE_BRACE, '[\-\+\^\>\<\*=\:\|\?\!]' => CLIKE_OPERATOR, '[^\d\.]' => CLIKE_NORMAL),
 		CLIKE_COMM_SLASH => array('\*' => CLIKE_COMM_STAR, '\/' => CLIKE_ICOMMENT, "['\"]" => CLIKE_END_QUOTE, CLIKE_NORMAL),
 		CLIKE_ICOMMENT   => array("[\r\n]" => CLIKE_NORMAL),

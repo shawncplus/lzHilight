@@ -1,8 +1,8 @@
 // defaults that give a base for the other syntaxes
 
 // Global to the highlighter, not a token
-H_BG  #000
-H_FG  #F8F8F2
+H_BG  235
+H_FG  222
 
 H_NBG #000
 H_NFG #FFF

@@ -30,14 +30,14 @@ class YamlLexer extends DefaultLexer
 		),
 		YML_STRING_S   => array('\'' => YML_END_QUOTE),
 		YML_STRING_D   => array('"' => YML_END_QUOTE),
-		YML_VAL_I      => array("[ \t]" => YML_I_WHITESPACE, "[\n\r]" => YML_WHITESPACE),
+		YML_VAL_I      => array("[ \t]" => YML_I_WHITESPACE, "[\n\r]" => YML_WHITESPACE, '[\[\]:]' => YML_VALOP),
 		YML_I_WHITESPACE => array(
-			"[\n\r]" => YML_WHITESPACE, '\'' => YML_STRING_S, '"' => YML_STRING_D,
-			':' => YML_VALOP, "[\|>\+\-]" => YML_OPERATOR, '\d' => YML_VAL_I, "[^ \t]" => YML_VAL_S
+			"[\n\r]" => YML_WHITESPACE, '\'' => YML_STRING_S, '"' => YML_STRING_D, '#' => YML_COMMENT,
+			'[\[\]:]' => YML_VALOP, "[\|>\+\-]" => YML_OPERATOR, '\d' => YML_VAL_I, "[^ \t]" => YML_VAL_S
 		),
 		YML_VAL_S      => array('#' => YML_COMMENT, "[ \t]" => YML_I_WHITESPACE, "[\n\r]" => YML_WHITESPACE),
-		YML_END_QUOTE  => array("[ \t]" => YML_I_WHITESPACE, "[\n\r]" => YML_WHITESPACE, YML_KEY),
-		YML_OPERATOR   => array("[\|>\+\-]" => YML_OPERATOR, "[\n\r]" => YML_WHITESPACE, YML_KEY),
+		YML_END_QUOTE  => array("[ \t]" => YML_I_WHITESPACE, '[\[\]:]' => YML_VALOP, "[\n\r]" => YML_WHITESPACE, YML_KEY),
+		YML_OPERATOR   => array("[\|>\+\-]" => YML_OPERATOR, '[\[\]:]' => YML_VALOP, "[\n\r]" => YML_WHITESPACE, "[^ \t]" => YML_VAL_S, YML_KEY),
 
 		# reserved token for splitting state
 		YML_HEADER => array("[\n\r]" => YML_WHITESPACE),

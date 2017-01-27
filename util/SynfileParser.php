@@ -67,7 +67,7 @@ class SynfileParser
 			$parts = preg_split('/\s+/', trim($line));
 
 			$token = $parts[0];
-			$color = $parts[1];
+			$color = isset($parts[1]) ? $parts[1] : NULL;
 			$bg_color = isset($parts[2]) ? $parts[2] : NULL;
 
 			// #LINK directive
@@ -81,7 +81,7 @@ class SynfileParser
 				}
 				continue;
 			} // HTML color
-			elseif (preg_match('/^#?[0-9A-F]{3,6}(%[ib])?/i', $color))
+			elseif (preg_match('/^#[0-9A-F]{3,6}(%[ib])?/i', $color))
 			{
 				$decorators = '';
 				if (strpos($color, '%'))
