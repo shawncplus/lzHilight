@@ -1,0 +1,15 @@
+{
+    "name": "shawncplus/lzhilight",
+    "description": "syntax highlighted cat",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shawn Biddle",
+            "email": "shawncplus@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "classmap": [ "tokenizers/", "util/" ]
+    }
+}

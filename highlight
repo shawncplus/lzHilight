@@ -10,7 +10,7 @@
  */
 
 
-require_once(dirname(__FILE__) . '/autoload.php');
+require_once(dirname(__FILE__) . '/vendor/autoload.php');
 
 // Resources directory
 define('RESC_DIR', dirname(__FILE__) . '/');
